@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: #1d1d1d;
+  --foreground-light: #4d4d4d;
+  --background: #ffffff;
+
+  --font-size: 1rem;
+  --font-ratio: 2;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-ratio: 1.6;
+    --font-size: 0.9rem;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Gothic A1', serif;
+  color: var(--primary);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  /* text-transform: capitalize; */
+  color: var(--accent);
+}
+
+h1 {
+  font-size: calc(
+    var(--font-size) * var(--font-ratio) * var(--font-ratio) * var(--font-ratio)
+  );
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: calc(var(--font-size) * var(--font-ratio) * var(--font-ratio));
+}
+
+h3 {
+  font-size: calc(var(--font-size) * var(--font-ratio));
+  font-weight: 600;
+}
+
+h4 {
+  font-size: calc(var(--font-size));
+}
+
+p,
+li,
+label {
+  font-size: calc(var(--font-size) * 1);
+  /* color: var(--foreground-light); */
+}
+
+img {
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.close-cursor{
+  cursor: url('/images/close-cursor.webp'), auto;
+}
+
+@keyframes fadeIn{
+  from {
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+}
+
+.fade-in{
+  animation: fadeIn .6s linear;
+}
+
+html {
+  height: 100dvh;
+  width: 100vw;
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  scroll-behavior: smooth;
+  background: var(--background);
+
+  body {
+    color: var(--foreground);
+    position: static;
+
+    header {
+      width: 100vw;
+      padding: 1rem 2rem;
+    }
+
+    section {
+      width: 100vw;
+      height: fit-content;
+      overflow: hidden;
+      flex-shrink: 0 !important;
+      padding: 4rem 2rem;
+
+      animation: fadeIn .5s linear;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 0.8rem 1rem;
+      }
+      section {
+        padding: 1rem 1rem;
+      }
+    }
+  }
+}
