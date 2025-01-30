@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Bag Bar",
@@ -12,9 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="scrollbar-hidden">
+      <body className="scrollbar-hidden">
+        <Header />
         {children}
+        <Footer />
+        <Analytics />
       </body>
     </html>
   );

@@ -1,9 +1,9 @@
+import Hero from "./components/Home/Hero";
+
 export default function Home() {
   return (
     <>
-      <section className="">
-        <h2>bag bar</h2>
-      </section>
+      <Hero />
     </>
   );
 }

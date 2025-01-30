@@ -1,13 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Italiana&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground: #1d1d1d;
-  --foreground-light: #4d4d4d;
-  --background: #ffffff;
+  --foreground: #ffffff;
+  --foreground-light: #b9b9b9;
+  --foreground-faded: #b9b9b92c;
+  --background: #0c0c0c;
+  --background-light: #0c0c0c98;
+  --background-faded: #0c0c0c2c;
+
+  --accent: #d179b7;
 
   --font-size: 1rem;
   --font-ratio: 2;
@@ -15,7 +20,7 @@
 
 @media (max-width: 768px) {
   :root {
-    --font-ratio: 1.6;
+    --font-ratio: 1.5;
     --font-size: 0.9rem;
   }
 }
@@ -24,7 +29,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Gothic A1', serif;
+  font-family: 'Host Grotesk', serif;
   color: var(--primary);
 }
 
@@ -32,8 +37,8 @@ h1,
 h2,
 h3,
 h4 {
-  /* text-transform: capitalize; */
-  color: var(--accent);
+  text-transform: capitalize;
+  /* font-family: 'Italiana', serif; */
 }
 
 h1 {
@@ -60,7 +65,15 @@ p,
 li,
 label {
   font-size: calc(var(--font-size) * 1);
-  /* color: var(--foreground-light); */
+  color: var(--foreground-light);
+}
+
+.grotesk {
+  font-family: 'Host Grotesk', serif;
+}
+
+.italiana {
+  font-family: 'Italiana', serif;
 }
 
 img {
@@ -74,21 +87,62 @@ img {
   display: none;
 }
 
-.close-cursor{
+.close-cursor {
   cursor: url('/images/close-cursor.webp'), auto;
 }
 
-@keyframes fadeIn{
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
-  to{
+  to {
     opacity: 1;
   }
 }
 
-.fade-in{
-  animation: fadeIn .6s linear;
+.fade-in {
+  animation: fadeIn 0.6s linear;
+}
+
+.transparent-gradient {
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.7) 20%,
+    rgba(0, 0, 0, 0) 30%
+  );
+}
+
+.animated-gradient {
+  background: linear-gradient(290deg, #000000, #464444, #151414);
+  background-size: 180% 180%;
+  animation: gradient-animation 12s ease infinite;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  /* border: 1px solid var(--foreground); */
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0px 1000px var(--background) inset;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 html {
@@ -110,13 +164,29 @@ html {
     }
 
     section {
-      width: 100vw;
+      width: calc(100% - 8rem);
       height: fit-content;
       overflow: hidden;
       flex-shrink: 0 !important;
-      padding: 4rem 2rem;
+      padding: 1rem 0.5rem;
+      margin-left: 4rem;
+      margin-right: 4rem;
 
-      animation: fadeIn .5s linear;
+      background-image: repeating-linear-gradient(
+          0deg,
+          var(--foreground-faded) 0 5px,
+          transparent 5px 15px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          var(--foreground-faded) 0 5px,
+          transparent 5px 15px
+        );
+      background-size: 1px 100%, 1px 100%;
+      background-position: left, right;
+      background-repeat: no-repeat, no-repeat;
+
+      animation: fadeIn 0.5s linear;
     }
 
     @media (max-width: 768px) {
@@ -124,7 +194,10 @@ html {
         padding: 0.8rem 1rem;
       }
       section {
-        padding: 1rem 1rem;
+        width: calc(100% - 4rem);
+        margin-left: 2rem;
+        margin-right: 2rem;
+        padding: 1rem 0.25rem;
       }
     }
   }
