@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SideMenu from './SideMenu';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,40 +9,25 @@ import CartView from './CartView';
 import FavsView from './FavsView';
 import MenuButton from './MenuButton';
 import { AlignLeft, Heart, ShoppingCart } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { useTheme } from '@/context/theme-context';
+import { useShop } from '@/context/ShopContext';
+import { useAuth } from '@/context/AuthContext';
 
 const Header: React.FC = () => {
+  const { theme } = useTheme();
+
   const pathname = usePathname();
   const hideHeader = pathname.match('auth');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
-      setMounted(true);
-    };
-
-    checkAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      checkAuth();
-    });
-
-    return () => subscription?.unsubscribe();
-  }, []);
+  const { isLoggedIn } = useAuth();
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [favsOpen, setFavsOpen] = useState<boolean>(false);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
 
-  const cart = [];
-  const favorites = [];
+  const { cart } = useShop();
+
+  const { favorites } = useShop();
 
   const pages = [
     { name: 'about us', href: '/about' },
@@ -83,7 +68,11 @@ const Header: React.FC = () => {
 
           <Link href="/" className="">
             <Image
-              src={`/images/logo.webp`}
+              src={
+                theme === 'dark'
+                  ? '/images/logo.webp'
+                  : '/images/logo-dark.webp'
+              }
               alt="Cordova Logo"
               width={100}
               height={50}
@@ -105,16 +94,14 @@ const Header: React.FC = () => {
             onClick={() => setCartOpen(true)}
             icon={<ShoppingCart className="md:hidden" />}
             label="cart"
-            count={cart.length}
+            count={cart.reduce((sum, item) => sum + item.quantity, 0)}
           />
 
-          {mounted && (
-            <Link
-              href={isLoggedIn ? '/account' : '/auth/login'}
-              className="hidden md:flex uppercase text-sm border-b-2 border-transparent hover:border-foreground transition-all duration-500">
-              {isLoggedIn ? 'account' : 'login'}
-            </Link>
-          )}
+          <Link
+            href={isLoggedIn ? '/account' : '/auth/login'}
+            className="hidden md:flex uppercase text-sm border-b-2 border-transparent hover:border-foreground transition-all duration-500">
+            {isLoggedIn ? 'account' : 'login'}
+          </Link>
         </div>
       </div>
 
@@ -125,7 +112,9 @@ const Header: React.FC = () => {
         position="left">
         <Link href="/" className="">
           <Image
-            src={`/images/logo.webp`}
+            src={
+              theme === 'dark' ? '/images/logo.webp' : '/images/logo-dark.webp'
+            }
             alt="Cordova Logo"
             width={100}
             height={50}

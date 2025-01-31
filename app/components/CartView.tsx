@@ -1,14 +1,31 @@
-
+'use client';
+import { useShop } from '@/context/ShopContext';
+import { useAuth } from '@/context/AuthContext';
 import React from 'react';
 
-interface CartViewProps {
-  className?: string
-}
+const CartView: React.FC = () => {
+  const { isLoggedIn } = useAuth();
+  const { cart } = useShop();
 
-const CartView: React.FC<CartViewProps> = ({className}) => {
   return (
-    <div className={`${className}`}>
-      <h3>My Cart</h3>
+    <div className="">
+      <h3 className="">Shopping Cart</h3>
+      {isLoggedIn ? (
+        cart.length > 0 ? (
+          <div className="space-y-4">
+            {cart.map(item => (
+              <div key={item.product_id} className="flex justify-between items-center">
+                <span>Product ID: {item.product_id}</span>
+                <span>Qty: {item.quantity}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>Your cart is empty</p>
+        )
+      ) : (
+        <p>Please login to view your cart</p>
+      )}
     </div>
   );
 };

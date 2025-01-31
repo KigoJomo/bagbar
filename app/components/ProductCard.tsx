@@ -12,7 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
   return (
-    <div className="w-full aspect-[3/4] relative">
+    <div className={`w-full aspect-[3/4] relative ${className}`}>
       <FavsButton
         product={product}
         className="absolute z-[4] top-2 right-2"
@@ -21,7 +21,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
       <Link
         href={`/products/${product.id}`}
         key={product.id}
-        className={`w-full aspect-[3/4] overflow-hidden fade-in grid grid-cols-1 grid-rows-1 relative group ${className}`}>
+        className={`w-full aspect-[3/4] overflow-hidden fade-in grid grid-cols-1 grid-rows-1 relative group`}>
         <div className="w-full col-span-1 row-span-1 z-[1]">
           <Image
             src={product.images[1]}

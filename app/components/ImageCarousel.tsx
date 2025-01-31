@@ -33,7 +33,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className }) => {
   };
 
   return (
-    <div className={`w-full h-fit flex-shrink-0 aspect-square md:aspect-[3/1] ${className}`}>
+    <div className={`w-full h-fit flex-shrink-0 ${className}`}>
       <Slider {...settings}>
         {images.map((imgSrc, index) => (
           <Image
@@ -42,7 +42,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className }) => {
             alt={`Bag bar ${index + 1}`}
             width={1000}
             height={1000}
-            className="w-full aspect-square md:aspect-[3/1]"
+            className="w-full aspect-[1]"
           />
         ))}
       </Slider>

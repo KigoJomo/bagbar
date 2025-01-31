@@ -1,26 +1,15 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Twitter, ArrowUp, Moon, Sun } from 'lucide-react';
 import { Input } from './Input';
 import CtaButton from './CtaButton';
+import { useTheme } from '@/context/theme-context';
 
 const Footer: React.FC = () => {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }, []);
+  const { theme, toggleTheme } = useTheme()
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-  };
 
   return (
     <footer className="border-t border-foreground-faded px-4 py-6 md:px-6 md:py-12">

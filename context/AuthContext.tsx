@@ -1,40 +1,57 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
-import type { Session, User } from '@supabase/supabase-js'
+import { Session } from '@supabase/supabase-js'
 
-type AuthContextType = {
+interface AuthContextType {
+  user: { id: string; email?: string } | null
   session: Session | null
-  user: User | null
-  isAdmin: boolean
+  isLoggedIn: boolean
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({
-  session: null,
   user: null,
-  isAdmin: false
+  session: null,
+  isLoggedIn: false,
+  isLoading: true
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (!error) setSession(session)
+      setIsLoading(false)
+    }
+
+    checkSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      setIsLoading(false)
     })
 
     return () => subscription?.unsubscribe()
   }, [])
 
   const value = {
+    user: session?.user ? { id: session.user.id, email: session.user.email } : null,
     session,
-    user: session?.user ?? null,
-    isAdmin: session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    isLoggedIn: !!session?.user,
+    isLoading
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}
