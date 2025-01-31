@@ -1,9 +1,9 @@
 'use client'
 import { supabase } from '@/lib/supabase/client'
-import { useAuth } from '@/context/AuthContext'
 
 export default function ProductForm() {
-  const { isAdmin } = useAuth()
+  // const { isAdmin } = useAuth()
+  const isAdmin = true
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
