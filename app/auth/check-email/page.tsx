@@ -19,13 +19,13 @@ export default function CheckEmailPage() {
   }, [router])
 
   return (
-    <div className="max-w-md mx-auto text-center py-24">
+    <section className="py-24 flex flex-col items-center justify-center space-y-4">
       <h1 className="text-2xl font-bold mb-4">Check Your Email</h1>
       <p className="text-foreground-light">
         We&apos;ve sent a confirmation link to your email address.
         <br />
         Please click the link to complete your registration.
       </p>
-    </div>
+    </section>
   )
 }

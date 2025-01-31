@@ -1,35 +1,130 @@
 'use client';
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Instagram, Twitter, ArrowUp, Moon, Sun } from 'lucide-react';
+import { Input } from './Input';
+import CtaButton from './CtaButton';
 
 const Footer: React.FC = () => {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
   return (
     <footer className="border-t border-foreground-faded px-4 py-6 md:px-6 md:py-12">
-      <div className="w-full flex flex-col md:flex-row md:justify-between gap-4">
-      <Link href="/" className="">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Brand Column */}
+        <div className="space-y-4">
+          <Link href="/">
             <Image
-              src="/images/logo.webp"
-              alt="Cordova Logo"
-              width={100}
-              height={50}
-              className="object-contain md:hover:scale-105 transition-all duration-300"
+              src={`/images/logo${theme === 'light' ? '-dark' : ''}.webp`}
+              alt="Bag Bar Logo"
+              width={120}
+              height={60}
+              className="object-contain hover:scale-105 transition-transform duration-300"
             />
           </Link>
-      </div>
-
-      <div className="w-full flex flex-col md:flex-row-reverse md:justify-between gap-4 mt-8 md:mt-16">
-        <div className="w-full md:w-1/2 flex flex-col gap-4">
-          <Link href={'/terms-of-service'} className='w-fit'>Terms of Service</Link>
-          <Link href={'/privacy-policy'} className='w-fit'>Privacy Policy</Link>
+          <p className="text-foreground-light text-sm">
+            Crafting timeless bags for modern life
+          </p>
         </div>
 
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="capitalize w-fit mt-6 cursor-pointer">
-          back to top
-        </button>
+        {/* Shop Column */}
+        <div className="space-y-4">
+          <h3 className="uppercase text-sm font-medium">Shop</h3>
+          <ul className="space-y-2">
+            <li><Link href="/products" className="text-foreground-light hover:text-foreground transition-colors">All Products</Link></li>
+            <li><Link href="/cart" className="text-foreground-light hover:text-foreground transition-colors">Cart</Link></li>
+            <li><Link href="/favorites" className="text-foreground-light hover:text-foreground transition-colors">Favorites</Link></li>
+          </ul>
+        </div>
+
+        {/* Support Column */}
+        <div className="space-y-4">
+          <h3 className="uppercase text-sm font-medium">Support</h3>
+          <ul className="space-y-2">
+            <li><Link href="/contact" className="text-foreground-light hover:text-foreground transition-colors">Contact Us</Link></li>
+            <li><Link href="/shipping" className="text-foreground-light hover:text-foreground transition-colors">Shipping Policy</Link></li>
+            <li><Link href="/returns" className="text-foreground-light hover:text-foreground transition-colors">Returns & Exchanges</Link></li>
+          </ul>
+        </div>
+
+        {/* Newsletter Column */}
+        <div className="space-y-4">
+          <h3 className="uppercase text-sm font-medium">Stay Updated</h3>
+          <form className="flex flex-col gap-2">
+            <Input
+              type="email"
+              required
+              placeholder="Enter your email"
+              className=""
+            />
+            <CtaButton
+              label="Subscribe"
+              type="submit"
+              hideIcon
+              />
+          </form>
+          <div className="flex gap-4 pt-4">
+            <Link href="#" className="text-foreground-light hover:text-foreground">
+              <Instagram size={20} />
+            </Link>
+            <Link href="#" className="text-foreground-light hover:text-foreground">
+              <Twitter size={20} />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="container mx-auto mt-12 pt-8 border-t border-foreground-faded flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex gap-6">
+          <Link href="/terms-of-service" className="text-sm text-foreground-light hover:text-foreground">
+            Terms of Service
+          </Link>
+          <Link href="/privacy-policy" className="text-sm text-foreground-light hover:text-foreground">
+            Privacy Policy
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 text-foreground-light hover:text-foreground transition-colors"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun size={16} />
+                <span className="text-sm">Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon size={16} />
+                <span className="text-sm">Dark Mode</span>
+              </>
+            )}
+          </button>
+          
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 text-foreground-light hover:text-foreground transition-colors"
+          >
+            <ArrowUp size={16} />
+            <span className="text-sm">Back to Top</span>
+          </button>
+        </div>
       </div>
     </footer>
   );

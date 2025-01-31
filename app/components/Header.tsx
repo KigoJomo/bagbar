@@ -83,7 +83,7 @@ const Header: React.FC = () => {
 
           <Link href="/" className="">
             <Image
-              src="/images/logo.webp"
+              src={`/images/logo.webp`}
               alt="Cordova Logo"
               width={100}
               height={50}
@@ -125,7 +125,7 @@ const Header: React.FC = () => {
         position="left">
         <Link href="/" className="">
           <Image
-            src="/images/logo.webp"
+            src={`/images/logo.webp`}
             alt="Cordova Logo"
             width={100}
             height={50}

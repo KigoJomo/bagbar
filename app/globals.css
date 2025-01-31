@@ -25,6 +25,19 @@
   }
 }
 
+[data-theme="light"] {
+  --foreground: #0c0c0c;
+  --foreground-light: #4a4a4a;
+  --foreground-faded: #4a4a4a2c;
+  --background: #ffffff;
+  --background-light: #ffffff98;
+  --background-faded: #ffffff2c;
+}
+
+.theme-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -66,6 +79,14 @@ li,
 label {
   font-size: calc(var(--font-size) * 1);
   color: var(--foreground-light);
+}
+
+[data-theme="light"] .product-card-title {
+  color: var(--background);
+}
+
+[data-theme="light"] .product-card-price {
+  color: var(--background-light);
 }
 
 .grotesk {

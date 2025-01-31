@@ -27,10 +27,10 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-6 py-12">
+    <section className="py-24 flex flex-col items-center justify-center space-y-4">
       <h1 className="text-2xl font-bold text-center">Reset Password</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 w-4/5 md:w-2/5">
         <Input
           id="password"
           type="password"
@@ -52,6 +52,6 @@ export default function ResetPasswordPage() {
           disabled={loading}
         />
       </form>
-    </div>
+    </section>
   )
 }

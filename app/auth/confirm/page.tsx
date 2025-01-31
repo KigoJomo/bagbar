@@ -39,7 +39,7 @@ export default function ConfirmPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto text-center space-y-6 py-12">
+    <section className="py-24 flex flex-col items-center justify-center space-y-4">
       <h1 className="text-2xl font-bold">Email Confirmation</h1>
       
       <div className="space-y-4">
@@ -60,6 +60,6 @@ export default function ConfirmPage() {
           Return to homepage
         </button>
       </div>
-    </div>
+    </section>
   )
 }

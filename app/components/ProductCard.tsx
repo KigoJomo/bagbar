@@ -33,9 +33,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
         </div>
         <div className="w-full h-full absolute top-0 left-0 z-[2] transparent-gradient pointer-events-none"></div>
         <div className="col-span-1 row-span-1 p-2 z-[3]">
-          <h4 className="">{product.name}</h4>
+          <h4 className="product-card-title">{product.name}</h4>
           <div className="w-full flex justify-between items-center">
-            <p className="capitalize ml-2 pl-2 border-l-4 border-accent">
+            <p className="product-card-price capitalize ml-2 pl-2 border-l-4 border-accent">
               ksh {product.price.toLocaleString()}
             </p>
             <MoveRight strokeWidth={1} width={32} />
