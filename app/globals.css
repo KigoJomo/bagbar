@@ -194,7 +194,7 @@ html {
       height: fit-content;
       overflow: hidden;
       flex-shrink: 0 !important;
-      padding: 1rem 0.5rem;
+      padding: 0rem 0.5rem;
       margin-left: 4rem;
       margin-right: 4rem;
 
@@ -223,7 +223,7 @@ html {
         width: calc(100% - 4rem);
         margin-left: 2rem;
         margin-right: 2rem;
-        padding: 1rem 0.25rem;
+        padding: 0rem 0.25rem;
       }
     }
   }

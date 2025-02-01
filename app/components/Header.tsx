@@ -94,7 +94,8 @@ const Header: React.FC = () => {
             onClick={() => setCartOpen(true)}
             icon={<ShoppingCart className="md:hidden" />}
             label="cart"
-            count={cart.reduce((sum, item) => sum + item.quantity, 0)}
+            // count={cart.reduce((sum, item) => sum + item.quantity, 0)}
+            count={cart.length}
           />
 
           <Link
@@ -153,7 +154,7 @@ const Header: React.FC = () => {
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
         position="right">
-        <CartView />
+        <CartView onClose={() => setCartOpen(false)} />
       </SideMenu>
     </header>
   );

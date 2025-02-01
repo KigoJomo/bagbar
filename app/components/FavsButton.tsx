@@ -20,7 +20,7 @@ const FavsButton: React.FC<FavsButtonProps> = ({
   const { showToast } = useToast();
   const { isLoggedIn } = useAuth();
   const { favorites, toggleFavorite } = useShop()
-  const isFavorite = favorites.includes(product.id)
+  const isFavorite = favorites.some(fav => fav.id === product.id);
 
   const handleClick = useCallback(async () => {
     if (!isLoggedIn) {
@@ -29,7 +29,7 @@ const FavsButton: React.FC<FavsButtonProps> = ({
     }
 
     try {
-      await toggleFavorite(product.id)
+      await toggleFavorite(product)
       showToast(
         isFavorite ? 'Removed from favorites' : 'Added to favorites',
         'success'
@@ -38,14 +38,14 @@ const FavsButton: React.FC<FavsButtonProps> = ({
       showToast('Failed to update favorites', 'error')
       console.error('Favorites error:', error)
     }
-  }, [isLoggedIn, isFavorite, product.id, toggleFavorite, showToast])
+  }, [isLoggedIn, isFavorite, product, toggleFavorite, showToast])
 
   return (
     <button
       className={`flex items-center justify-center gap-4 bg-foreground *:text-background py-2 ${
         showText
-          ? 'px-4 rounded-none hover:bg-foreground-light'
-          : 'px-2 rounded-full hover:*:fill-accent hover:*:stroke-accent'
+          ? 'px-4 rounded-none md:hover:bg-foreground-light'
+          : 'px-2 rounded-full bg-black/10 backdrop-blur-3xl shadow-2xl md:hover:*:fill-accent md:hover:*:stroke-accent'
       } ${className} cursor-pointer transition-all duration-300`}
       onClick={handleClick}
       aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}>
@@ -54,7 +54,7 @@ const FavsButton: React.FC<FavsButtonProps> = ({
         className={`${
           isFavorite
             ? 'fill-accent stroke-accent'
-            : 'fill-transparent stroke-background'
+            : 'fill-transparent stroke-foreground'
         } transition-all duration-300`}
       />
       {showText && (

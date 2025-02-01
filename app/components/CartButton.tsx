@@ -47,8 +47,8 @@ const CartButton: React.FC<CartButtonProps> = ({
     <button
       className={`flex items-center justify-center gap-4 *:text-background py-2 ${
         showText 
-          ? "px-4 rounded-none bg-accent hover:gap-6" 
-          : "px-2 rounded-full bg-foreground hover:bg-foreground-light hover:*:fill-accent hover:*:stroke-accent"
+          ? "px-4 rounded-none bg-accent md:hover:gap-6" 
+          : "px-2 rounded-full bg-foreground md:hover:bg-foreground-light md:hover:*:fill-accent md:hover:*:stroke-accent"
       } ${className} transition-all duration-300`}
       onClick={handleClick}
       aria-label={isInCart ? 'Remove from cart' : 'Add to cart'}

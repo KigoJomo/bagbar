@@ -2,14 +2,20 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/context/AuthContext'
+import { Product } from '@/types/declarations';
+
+interface CartItem {
+  product: Product; // Changed from product_id
+  quantity: number;
+}
 
 interface ShopState {
-  favorites: string[]
-  cart: Array<{ product_id: string; quantity: number }>
+  favorites: Product[]
+  cart: CartItem[]
 }
 
 interface ShopContextType extends ShopState {
-  toggleFavorite: (productId: string) => Promise<void>
+  toggleFavorite: (product: Product) => Promise<void>
   addToCart: (productId: string) => Promise<void>
   updateCartQuantity: (productId: string, quantity: number) => Promise<void>
   removeFromCart: (productId: string) => Promise<void>
@@ -36,78 +42,81 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   // Favorites Management
   const fetchFavorites = useCallback(async () => {
     if (!user?.id) {
-      setState(prev => ({ ...prev, favorites: [] }))
-      return
+      setState(prev => ({ ...prev, favorites: [] }));
+      return;
     }
-
+  
     try {
       const { data, error } = await supabase
         .from('favorites')
-        .select('product_id')
-        .eq('user_id', user.id)
-
-      if (error) throw error
-
+        .select(`
+          product_id,
+          products:product_id (*)
+        `)
+        .eq('user_id', user.id);
+  
+      if (error) throw error;
+  
       setState(prev => ({
         ...prev,
-        favorites: data.map(item => item.product_id)
-      }))
+        favorites: data.map(item => item.products as unknown as Product)
+      }));
     } catch (error) {
-      console.error('Failed to fetch favorites:', error)
+      console.error('Failed to fetch favorites:', error);
     }
-  }, [user?.id])
+  }, [user?.id]);
 
-  const toggleFavorite = useCallback(async (productId: string) => {
-    if (!user?.id) return
-
+  const toggleFavorite = useCallback(async (product: Product) => {
+    if (!user?.id) return;
+  
     try {
-      if (state.favorites.includes(productId)) {
-        const { error } = await supabase
+      if (state.favorites.some(fav => fav.id === product.id)) {
+        await supabase
           .from('favorites')
           .delete()
-          .match({ user_id: user.id, product_id: productId })
-
-        if (error) throw error
+          .match({ user_id: user.id, product_id: product.id });
       } else {
-        const { error } = await supabase
+        await supabase
           .from('favorites')
-          .insert({ user_id: user.id, product_id: productId })
-
-        if (error) throw error
+          .insert({ user_id: user.id, product_id: product.id });
       }
-      await fetchFavorites()
+      await fetchFavorites();
     } catch (error) {
-      console.error('Failed to toggle favorite:', error)
-      throw error
+      console.error('Failed to toggle favorite:', error);
+      throw error;
     }
-  }, [user?.id, state.favorites, fetchFavorites])
+  }, [user?.id, state.favorites, fetchFavorites]);
 
   // Cart Management
   const fetchCart = useCallback(async () => {
     if (!user?.id) {
-      setState(prev => ({ ...prev, cart: [] }))
-      return
+      setState(prev => ({ ...prev, cart: [] }));
+      return;
     }
-
+  
     try {
       const { data, error } = await supabase
         .from('carts')
-        .select('product_id, quantity')
-        .eq('user_id', user.id)
-
-      if (error) throw error
-
+        .select(`
+          quantity,
+          products:product_id (*)
+        `)
+        .eq('user_id', user.id);
+  
+      if (error) throw error;
+  
       setState(prev => ({
         ...prev,
         cart: data.map(item => ({
-          product_id: item.product_id,
+          product: item.products as unknown as Product,
           quantity: item.quantity
         }))
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to fetch cart:', error)
+      console.error('Failed to fetch cart:', error);
     }
-  }, [user?.id])
+  }, [user?.id]);
+  
 
   const addToCart = useCallback(async (productId: string) => {
     if (!user?.id) return

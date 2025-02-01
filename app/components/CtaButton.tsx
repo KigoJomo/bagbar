@@ -28,8 +28,10 @@ const CtaButton: FC<CtaButtonProps> = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`w-full px-4 py-2 flex items-center justify-center gap-2 hover:gap-4 border cursor-pointer ${
-        secondary ? 'bg-transparent *:text-foreground' : 'bg-accent *:text-background'
+      className={`w-full px-4 py-2 flex items-center justify-center gap-2 md:hover:gap-4 border cursor-pointer ${
+        secondary
+          ? 'bg-transparent *:text-foreground'
+          : 'bg-accent *:text-background'
       } transition-all duration-300 ${className}`}
       {...props}>
       {icon && <span className="flex items-center">{icon}</span>}
