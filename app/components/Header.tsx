@@ -63,7 +63,7 @@ const Header: React.FC = () => {
     window.addEventListener('popstate', handlePopState);
 
     // Optionally push initial state to enable back button detection
-    window.history.pushState(null, '', window.location.pathname);
+    // window.history.pushState(null, '', window.location.pathname);
 
     // Cleanup function
     return () => {

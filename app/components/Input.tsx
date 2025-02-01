@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               'w-full rounded-none border border-foreground-light outline-none px-4 py-2 bg-transparent transition-all duration-300',
               'focus:outline-none focus:border-accent',
-              'disabled:cursor-not-allowed disabled:border-foreground-faded autofill:',
+              'disabled:cursor-not-allowed disabled:border-foreground-faded',
               startIcon ? 'pl-10' : 'pl-4',
               error
                 ? 'border-red-500 focus:border-red-500 '

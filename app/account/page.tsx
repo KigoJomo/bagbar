@@ -6,10 +6,12 @@ import { Input } from '@/app/components/Input';
 import CtaButton from '@/app/components/CtaButton';
 import { Order } from '@/types/declarations';
 import { LoaderCircle, LogOut, SquareCheckBig, X } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AccountPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const role = useAuth().user?.role;
   const [user, setUser] = useState<{
     id: string;
     email: string;
@@ -140,9 +142,10 @@ export default function AccountPage() {
         {/* Account Details */}
         <div className="space-y-6">
           <div className="border-b border-foreground-faded pb-6">
-            <h3 className="uppercase text-sm font-medium mb-4">
-              Account Details
-            </h3>
+            <div className="flex items-center gap-4 mb-4">
+              <h3 className="uppercase text-sm font-medium">Account Details</h3>
+              <p className="italic">({role})</p>
+            </div>
 
             <div className="space-y-4">
               <Input
@@ -208,33 +211,57 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {/* Order History */}
-        <div className="border-b border-foreground-faded pb-6">
-          <h3 className="uppercase text-sm font-medium mb-4">Order History</h3>
+        {role === 'admin' ? (
+          <div className='border-b border-foreground-faded pb-6'>
+            <h3 className='uppercase text-sm font-medium mb-4'>Admin Panel</h3>
 
-          {orders.length === 0 ? (
-            <p className="text-foreground-light">No orders found</p>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="border rounded-md p-4 hover:border-foreground transition-colors">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
-                    <span>${order.total}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-foreground-light">
-                    <span>
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </span>
-                    <span className="capitalize">{order.status}</span>
-                  </div>
-                </div>
-              ))}
+            <hr className='bg-foreground-faded my-6' />
+
+            <div className='space-y-4 px-6'>
+              <CtaButton
+                label='Manage Products'
+                secondary
+                onClick={() => router.push('/admin/products/add')}
+              />
+              <CtaButton
+                label='Manage Orders'
+                secondary
+                onClick={() => router.push('/admin/orders')}
+              />
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="order-history border-b border-foreground-faded pb-6">
+            <h3 className="uppercase text-sm font-medium mb-4">
+              Order History
+            </h3>
+
+            {orders.length === 0 ? (
+              <p className="text-foreground-light">No orders found</p>
+            ) : (
+              <div className="space-y-4">
+                {orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="border rounded-md p-4 hover:border-foreground transition-colors">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-medium">
+                        #{order.id.slice(0, 8)}
+                      </span>
+                      <span>${order.total}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-foreground-light">
+                      <span>
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </span>
+                      <span className="capitalize">{order.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <CtaButton

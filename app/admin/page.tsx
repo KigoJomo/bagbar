@@ -1,18 +1,10 @@
-import { supabase } from '@/lib/supabase/client'
-import { redirect } from 'next/navigation'
-import ProductForm from '../components/admin/ProductForm';
+import AdminStats from "../components/admin/AdminStats";
 
-export default async function AdminPage() {
-  const { data: { session } } = await supabase.auth.getSession()
-
-  if (!session || session.user.email !== process.env.ADMIN_EMAIL) {
-    redirect('/login')
-  }
-
+export default function AdminDashboard() {
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <ProductForm />
-    </div>
+    <section className="pb-8">
+      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <AdminStats />
+    </section>
   )
 }
