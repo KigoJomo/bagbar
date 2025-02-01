@@ -20,7 +20,7 @@ const CartButton: React.FC<CartButtonProps> = ({
   const { showToast } = useToast();
   const { isLoggedIn } = useAuth();
   const { cart, addToCart, removeFromCart } = useShop();
-  const cartItem = cart.find(item => item.product_id === product.id)
+  const cartItem = cart.find(item => item.product.id === product.id)
   const isInCart = Boolean(cartItem)
 
   const handleClick = useCallback(async () => {
