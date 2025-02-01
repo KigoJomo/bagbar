@@ -146,7 +146,7 @@ const Header: React.FC = () => {
         isOpen={favsOpen}
         onClose={() => setFavsOpen(false)}
         position="right">
-        <FavsView />
+        <FavsView onClose={() => setFavsOpen(false)} />
       </SideMenu>
 
       {/* Cart Side Menu */}
