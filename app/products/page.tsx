@@ -6,7 +6,7 @@ export default async function ProductsPage() {
   const { data: products, error } = await supabase
     .from('products')
     .select('*')
-    .limit(10);
+    .limit(30);
 
   return (
     <>

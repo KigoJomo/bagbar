@@ -100,6 +100,7 @@ export default function ProductForm({ onSubmit, error }: ProductFormProps) {
     }
 
     try {
+      showToast('Adding product...', 'info');
       // Upload images first
       const uploadedImageUrls = await Promise.all(selectedFiles.map(handleImageUpload));
 

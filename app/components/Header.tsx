@@ -20,7 +20,7 @@ const Header: React.FC = () => {
   const { isLoggedIn } = useAuth();
 
   const pathname = usePathname();
-  const hideHeader = pathname.match('auth');
+  const hideHeader = pathname.match(/^\/(?:auth|admin)/);
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [favsOpen, setFavsOpen] = useState<boolean>(false);
