@@ -6,9 +6,11 @@ interface SplitTitleProps {
 
 const SplitTitle = ({ text }: SplitTitleProps) => {
   const [firstWord, secondWord] = text.split(' ');
-  
+
   if (!firstWord || !secondWord) {
-    throw new Error('SplitTitle component requires a string with exactly two words');
+    throw new Error(
+      'SplitTitle component requires a string with exactly two words'
+    );
   }
 
   return (
@@ -17,10 +19,10 @@ const SplitTitle = ({ text }: SplitTitleProps) => {
         <h1 className="uppercase italic text-nowrap hover:not-italic transition-all duration-300">
           {firstWord}
         </h1>
-        <div className="w-full h-[1px] bg-foreground-faded"></div>
+        <div className="w-full h-[1px] border-t border-foreground-faded border-dashed"></div>
       </div>
       <div className="w-full flex items-center -mt-6 md:-mt-28 md:-mb-8">
-        <div className="w-full h-[1px] bg-foreground-faded"></div>
+        <div className="w-full h-[1px] border-t border-foreground-faded border-dashed"></div>
         <h1 className="uppercase italic text-nowrap hover:not-italic transition-all duration-300">
           {secondWord}
         </h1>
