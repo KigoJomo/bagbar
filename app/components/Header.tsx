@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SideMenu from './SideMenu';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,25 +15,61 @@ import { useAuth } from '@/context/AuthContext';
 
 const Header: React.FC = () => {
   const { theme } = useTheme();
+  const { cart } = useShop();
+  const { favorites } = useShop();
+  const { isLoggedIn } = useAuth();
 
   const pathname = usePathname();
   const hideHeader = pathname.match('auth');
 
-  const { isLoggedIn } = useAuth();
-
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [favsOpen, setFavsOpen] = useState<boolean>(false);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
-
-  const { cart } = useShop();
-
-  const { favorites } = useShop();
 
   const pages = [
     { name: 'about us', href: '/about' },
     { name: 'collection', href: '/products' },
     { name: 'my account', href: isLoggedIn ? '/account' : '/auth/login' },
   ];
+
+  useEffect(() => {
+    // Handle ESC key
+    const handleEscKey = (event: { key: string; }) => {
+        if (event.key === 'Escape') {
+            console.log('ESC key pressed');
+            if (menuOpen || favsOpen || cartOpen ) {
+              setMenuOpen(false);
+              setFavsOpen(false);
+              setCartOpen(false);
+          }
+        }
+    };
+
+    // Handle browser back button
+    const handlePopState = () => {
+        console.log('Back button pressed');
+        if (menuOpen || favsOpen || cartOpen ) {
+            window.history.pushState(null, '', window.location.pathname);
+            setMenuOpen(false);
+            setFavsOpen(false);
+            setCartOpen(false);
+        }
+    };
+
+    // Add event listeners
+    window.addEventListener('keydown', handleEscKey);
+    window.addEventListener('popstate', handlePopState);
+
+    // Optionally push initial state to enable back button detection
+    window.history.pushState(null, '', window.location.pathname);
+
+    // Cleanup function
+    return () => {
+        window.removeEventListener('keydown', handleEscKey);
+        window.removeEventListener('popstate', handlePopState);
+    };
+}, [cartOpen, favsOpen, menuOpen]);
+
 
   return (
     <header
