@@ -53,6 +53,8 @@ const Header: React.FC = () => {
             setMenuOpen(false);
             setFavsOpen(false);
             setCartOpen(false);
+        } else{
+          return;
         }
     };
 
