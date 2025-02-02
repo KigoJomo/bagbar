@@ -10,9 +10,11 @@ export default async function ProductsPage() {
 
   return (
     <>
-      <section className="flex flex-col gap-4 pt-0">
+      <section className="flex flex-col gap-6">
 
         <SplitTitle text="our collection" />
+
+        <hr className='border-foreground-faded' />
 
         {!error && products.length && (
           <ProductGrid products={products} />

@@ -10,9 +10,11 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ShopProvider } from "@/context/ShopContext";
 
 export const metadata: Metadata = {
-  title: "Bag Bar",
-  description: "Quality bags for you.",
+  title: "Bag Bar | Affordable Luxury Handbags in Kenya",
+  description: "Discover premium quality handbags at accessible prices. Free nationwide delivery across Kenya, 30-day quality guarantee, and secure payments.",
+  keywords: ["handbags Nairobi", "affordable luxury bags", "Kenya fashion", "armpit bags", "designer bags Kenya"],
 };
+
 
 export default function RootLayout({
   children,

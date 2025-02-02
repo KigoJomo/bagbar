@@ -1,13 +1,20 @@
-import { MoveRight } from "lucide-react";
-import Link from "next/link";
+import { MoveRight } from 'lucide-react';
+import Link from 'next/link';
+import { FC } from 'react';
 
-const CtaBanner = ({ text, link }: { text: string; link: string }) => (
-  <Link href={link} className="bg-accent hover:opacity-95 p-6 text-center my-8 transition-all duration-300">
-    <p className="text-background text-xl flex items-center justify-center gap-4">
-      {text}
-      <MoveRight />
-    </p>
+interface CtaBannerProps {
+  text: string;
+  link: string;
+  className?: string;
+}
+
+const CtaBanner: FC<CtaBannerProps> = ({ text, link, className }) => (
+  <Link
+    href={link}
+    className={`bg-accent hover:opacity-95 px-6 py-4 flex items-center justify-center gap-4 md:hover:gap-8 transition-all duration-300 ${className}`}>
+    <p className="text-background text-xl">{text}</p>
+    <MoveRight className='stroke-background' />
   </Link>
-)
+);
 
-export default CtaBanner
+export default CtaBanner;

@@ -1,9 +1,9 @@
-import Hero from "./components/Home/Hero";
+import LandingPage from './components/LandingPage';
+import { getFeaturedProducts, getRandomProducts } from '@/lib/supabase/queries';
 
-export default function Home() {
-  return (
-    <>
-      <Hero />
-    </>
-  );
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts();
+  const randomProducts = await getRandomProducts();
+  
+  return <LandingPage featuredProducts={featuredProducts} randomProducts={randomProducts} />;
 }

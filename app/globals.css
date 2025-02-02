@@ -16,7 +16,7 @@
   --accent: #c8a2c8;
 
   --font-size: 1rem;
-  --font-ratio: 2;
+  --font-ratio: 1.8;
 }
 
 @media (max-width: 768px) {
@@ -136,7 +136,7 @@ img {
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.7) 20%,
-    rgba(0, 0, 0, 0) 30%
+    rgba(0, 0, 0, 0) 50%
   );
 }
 
@@ -187,19 +187,20 @@ html {
 
     header, .admin-nav {
       width: 100vw;
-      padding: 1rem 2rem;
+      padding: .5rem 2rem;
     }
 
     section {
-      width: calc(100% - 8rem);
+      /* width: calc(100% - 8rem); */
+      width: 100%;
       height: fit-content;
       overflow: hidden;
       flex-shrink: 0 !important;
-      padding: 0rem 0.5rem;
-      margin-left: 4rem;
-      margin-right: 4rem;
+      padding: 1rem 4rem;
+      /* margin-left: 4rem;
+      margin-right: 4rem; */
 
-      background-image: repeating-linear-gradient(
+      /* background-image: repeating-linear-gradient(
           0deg,
           var(--foreground-faded) 0 5px,
           transparent 5px 15px
@@ -211,7 +212,7 @@ html {
         );
       background-size: 1px 100%, 1px 100%;
       background-position: left, right;
-      background-repeat: no-repeat, no-repeat;
+      background-repeat: no-repeat, no-repeat; */
 
       animation: fadeIn 0.5s linear;
     }
@@ -221,10 +222,11 @@ html {
         padding: 0.8rem 1rem;
       }
       section {
-        width: calc(100% - 4rem);
-        margin-left: 2rem;
-        margin-right: 2rem;
-        padding: 0rem 0.25rem;
+        /* width: calc(100% - 4rem); */
+        width: 100%;
+        padding: 1rem 1rem;
+        /* margin-left: 2rem;
+        margin-right: 2rem; */
       }
     }
   }

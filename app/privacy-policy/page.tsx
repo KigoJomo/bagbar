@@ -6,8 +6,10 @@ import CtaBanner from '../components/CtaBanner';
 const Page: NextPage = () => {
   return (
     <>
-      <section className="flex flex-col gap-4">
-        <SplitTitle text="privacy policy" />
+      <section className="flex flex-col items-center gap-4">
+        <div className="w-full">
+          <SplitTitle text="privacy policy" />
+        </div>
 
         <hr className="border-foreground-faded" />
 
@@ -38,6 +40,7 @@ const Page: NextPage = () => {
         <CtaBanner 
           text="Shop Confidently Today"
           link="/products"
+          className='w-screen'
         />
       </section>  
     </>

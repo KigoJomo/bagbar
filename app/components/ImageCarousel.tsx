@@ -8,9 +8,10 @@ import 'slick-carousel/slick/slick-theme.css';
 interface ImageCarouselProps {
   images: string[];
   className?: string;
+  aspectRatio?: string;
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className, aspectRatio="aspect-[1]" }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -33,7 +34,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className }) => {
   };
 
   return (
-    <div className={`w-full h-fit flex-shrink-0 ${className}`}>
+    <div className={`w-full h-fit flex-shrink-0 ${className} ${aspectRatio}`}>
       <Slider {...settings}>
         {images.map((imgSrc, index) => (
           <Image
@@ -42,7 +43,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, className }) => {
             alt={`Bag bar ${index + 1}`}
             width={1000}
             height={1000}
-            className="w-full aspect-[1]"
+            className={`w-full ${aspectRatio}`}
           />
         ))}
       </Slider>
