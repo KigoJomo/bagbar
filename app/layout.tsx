@@ -10,9 +10,34 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ShopProvider } from "@/context/ShopContext";
 
 export const metadata: Metadata = {
-  title: "Bag Bar | Affordable Luxury Handbags in Kenya",
-  description: "Discover premium quality handbags at accessible prices. Free nationwide delivery across Kenya, 30-day quality guarantee, and secure payments.",
-  keywords: ["handbags Nairobi", "affordable luxury bags", "Kenya fashion", "armpit bags", "designer bags Kenya"],
+  title: "Bag Bar | Affordable Luxury Armpit Bags in Kenya",
+  description:
+    "Discover premium quality armpit bags at accessible prices. Free nationwide delivery across Kenya, 30-day quality guarantee, and secure payments.",
+  keywords: [
+    "armpit bags Nairobi",
+    "affordable luxury armpit bags",
+    "Kenya fashion",
+    "designer armpit bags Kenya",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Bag Bar | Affordable Luxury Armpit Bags in Kenya",
+    description:
+      "Discover premium quality armpit bags at accessible prices. Free nationwide delivery across Kenya, 30-day quality guarantee, and secure payments.",
+    url: "https://bagbar.vercel.app",
+    siteName: "Bag Bar",
+    images: "/images/opengraph-image.webp",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@bagbar_co",
+    creator: "@bagbar_co",
+  },
 };
 
 
