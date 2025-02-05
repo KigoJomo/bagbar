@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     title: "Bag Bar | Affordable Luxury Armpit Bags in Kenya",
     description:
       "Discover premium quality armpit bags at accessible prices. Free nationwide delivery across Kenya, 30-day quality guarantee, and secure payments.",
-    url: "https://bagbar.vercel.app",
     siteName: "Bag Bar",
     images: "/images/opengraph-image.webp",
     locale: "en_US",
