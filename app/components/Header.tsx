@@ -8,13 +8,14 @@ import Image from 'next/image';
 import CartView from './CartView';
 import FavsView from './FavsView';
 import MenuButton from './MenuButton';
-import { AlignLeft, Heart, ShoppingCart } from 'lucide-react';
+import { AlignLeft, Heart, Moon, ShoppingCart, Sun } from 'lucide-react';
 import { useTheme } from '@/context/theme-context';
 import { useShop } from '@/context/ShopContext';
 import { useAuth } from '@/context/AuthContext';
 
 const Header: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
+
   const { cart } = useShop();
   const { favorites } = useShop();
   const { isLoggedIn } = useAuth();
@@ -29,33 +30,34 @@ const Header: React.FC = () => {
   const pages = [
     { name: 'about us', href: '/about' },
     { name: 'collection', href: '/products' },
+    { name: 'contact us', href: '/contact' },
     { name: 'my account', href: isLoggedIn ? '/account' : '/auth/login' },
   ];
 
   useEffect(() => {
     // Handle ESC key
-    const handleEscKey = (event: { key: string; }) => {
-        if (event.key === 'Escape') {
-            console.log('ESC key pressed');
-            if (menuOpen || favsOpen || cartOpen ) {
-              setMenuOpen(false);
-              setFavsOpen(false);
-              setCartOpen(false);
-          }
+    const handleEscKey = (event: { key: string }) => {
+      if (event.key === 'Escape') {
+        console.log('ESC key pressed');
+        if (menuOpen || favsOpen || cartOpen) {
+          setMenuOpen(false);
+          setFavsOpen(false);
+          setCartOpen(false);
         }
+      }
     };
 
     // Handle browser back button
     const handlePopState = () => {
-        console.log('Back button pressed');
-        if (menuOpen || favsOpen || cartOpen ) {
-            window.history.pushState(null, '', window.location.pathname);
-            setMenuOpen(false);
-            setFavsOpen(false);
-            setCartOpen(false);
-        } else{
-          return;
-        }
+      console.log('Back button pressed');
+      if (menuOpen || favsOpen || cartOpen) {
+        window.history.pushState(null, '', window.location.pathname);
+        setMenuOpen(false);
+        setFavsOpen(false);
+        setCartOpen(false);
+      } else {
+        return;
+      }
     };
 
     // Add event listeners
@@ -67,11 +69,10 @@ const Header: React.FC = () => {
 
     // Cleanup function
     return () => {
-        window.removeEventListener('keydown', handleEscKey);
-        window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('keydown', handleEscKey);
+      window.removeEventListener('popstate', handlePopState);
     };
-}, [cartOpen, favsOpen, menuOpen]);
-
+  }, [cartOpen, favsOpen, menuOpen]);
 
   return (
     <header
@@ -149,34 +150,50 @@ const Header: React.FC = () => {
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
         position="left">
-        <Link href="/" className="">
-          <Image
-            src={
-              theme === 'dark' ? '/images/logo.webp' : '/images/logo-dark.webp'
-            }
-            alt="Cordova Logo"
-            width={100}
-            height={50}
-            className="object-contain"
-          />
-        </Link>
-
-        <hr className="my-4" />
-
-        <ul className="w-full flex flex-col gap-6 ">
-          {pages.map((page, index) => (
-            <li key={index} className="w-full">
-              <Link
-                href={page.href}
-                className={`w-full flex uppercase text-lg font-semibold transition-all duration-300 ${
-                  pathname.match(page.href) ? 'opacity-100' : 'opacity-50'
-                }`}
-                onClick={() => setMenuOpen(false)}>
-                {page.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="w-full h-[90%] flex flex-col gap-2">
+          <Link href="/" className="">
+            <Image
+              src={
+                theme === 'dark' ? '/images/logo.webp' : '/images/logo-dark.webp'
+              }
+              alt="Cordova Logo"
+              width={100}
+              height={50}
+              className="object-contain"
+            />
+          </Link>
+          <hr className="my-4" />
+          <ul className="w-full flex flex-col gap-6 ">
+            {pages.map((page, index) => (
+              <li key={index} className="w-full">
+                <Link
+                  href={page.href}
+                  className={`w-full flex uppercase text-lg font-semibold transition-all duration-300 ${
+                    pathname.match(page.href) ? 'opacity-100' : 'opacity-50'
+                  }`}
+                  onClick={() => setMenuOpen(false)}>
+                  {page.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {/* theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="mt-auto flex items-center gap-2 text-foreground-light hover:text-foreground transition-colors">
+            {theme === 'dark' ? (
+              <>
+                <Sun size={16} />
+                <span className="text-sm">Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon size={16} />
+                <span className="text-sm">Dark Mode</span>
+              </>
+            )}
+          </button>
+        </div>
       </SideMenu>
 
       {/* Favorites Side Menu */}
