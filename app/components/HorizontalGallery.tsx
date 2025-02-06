@@ -8,11 +8,11 @@ interface HorizontalGalleryProps {
 
 const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ products }) => {
   return (
-    <div className="w-full flex gap-4 overflow-x-scroll scrollbar-hidden">
+    <div className="w-full flex flex-row gap-4 overflow-x-scroll scrollbar-hidden">
       {products.map((product, index) => (
         <ProductCard
           key={index}
-          className="w-[60vw] md:w-1/4 flex-shrink-0"
+          className="max-w-[60vw] md:w-1/4 flex-shrink-0"
           product={product}
         />
       ))}

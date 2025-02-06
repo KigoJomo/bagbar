@@ -5,13 +5,15 @@ import { useAuth } from '@/context/AuthContext'
 import { Product } from '@/types/declarations';
 
 interface CartItem {
-  product: Product; // Changed from product_id
+  product: Product;
   quantity: number;
 }
 
 interface ShopState {
   favorites: Product[]
   cart: CartItem[]
+  updatingCart: boolean
+  upDatingFavorites: boolean
 }
 
 interface ShopContextType extends ShopState {
@@ -29,14 +31,18 @@ const ShopContext = createContext<ShopContextType>({
   addToCart: async () => {},
   updateCartQuantity: async () => {},
   removeFromCart: async () => {},
-  clearCart: async () => {}
+  clearCart: async () => {},
+  updatingCart: false,
+  upDatingFavorites: false
 })
 
 export function ShopProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const [state, setState] = useState<ShopState>({
     favorites: [],
-    cart: []
+    cart: [],
+    updatingCart: false,
+    upDatingFavorites: false
   })
 
   // Favorites Management
@@ -69,6 +75,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const toggleFavorite = useCallback(async (product: Product) => {
     if (!user?.id) return;
   
+    setState(prev => ({ ...prev, upDatingFavorites: true }));
     try {
       if (state.favorites.some(fav => fav.id === product.id)) {
         await supabase
@@ -84,6 +91,8 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
       throw error;
+    } finally {
+      setState(prev => ({ ...prev, upDatingFavorites: false }));
     }
   }, [user?.id, state.favorites, fetchFavorites]);
 
@@ -144,6 +153,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const updateCartQuantity = useCallback(async (productId: string, quantity: number) => {
     if (!user?.id) return
 
+    setState(prev => ({ ...prev, updatingCart: true }))
     try {
       if (quantity < 1) {
         await removeFromCart(productId)
@@ -160,6 +170,8 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Failed to update cart quantity:', error)
       throw error
+    } finally {
+      setState(prev => ({ ...prev, updatingCart: false }))
     }
   }, [user?.id, fetchCart])
 
@@ -242,6 +254,8 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       value={{
         favorites: state.favorites,
         cart: state.cart,
+        updatingCart: state.updatingCart,
+        upDatingFavorites: state.upDatingFavorites,
         toggleFavorite,
         addToCart,
         updateCartQuantity,

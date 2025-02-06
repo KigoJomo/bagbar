@@ -41,6 +41,7 @@ interface FavItemProps {
 }
 
 const FavItem: React.FC<FavItemProps> = ({ product, onClose }) => {
+  const { upDatingFavorites } = useShop();
 
   return (
     <div className="w-full group flex gap-2 pb-4 border-b border-foreground-faded">
@@ -55,15 +56,19 @@ const FavItem: React.FC<FavItemProps> = ({ product, onClose }) => {
       </div>
 
       <div className="w-3/4 aspect-[9/4] flex flex-col justify-between">
-        <h5 className="capitalize font-semibold">{product.name}</h5>
+        <h5 className="capitalize font-semibold truncate">{product.name}</h5>
 
         <div className="w-full flex items-center justify-between">
-          <div className="w-full flex items-center justify-between pr-6 relative">
+          <div className="w-full flex items-center justify-between relative">
             <p className="italic">Ksh {product.price.toLocaleString()}</p>
-            <div className="absolute right-6 border bg-background px-2 aspect-square rounded-full flex items-center pointer-events-none z-[5]">
-              <Trash2 size={16} />
+            <div className="absolute right-0 border bg-background px-2 aspect-square rounded-full flex items-center pointer-events-none z-[5]">
+              {upDatingFavorites ? (
+                <div className="w-4 h-4 rounded-full border-t-2 border-l-2 border-b-2 border-r-2 border-foreground border-r-transparent animate-spin"></div>
+              ) : (
+                <Trash2 size={14} />
+              )}
             </div>
-            <FavsButton product={product} className="z-[4]" />
+            <FavsButton product={product} className="z-[4] opacity-0" />
           </div>
         </div>
 

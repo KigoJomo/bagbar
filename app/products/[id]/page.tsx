@@ -31,12 +31,12 @@ export default async function ProductPage({
 
   return (
     <>
-      <section className="p-0 md:px-12 flex flex-col md:flex-row md:gap-6">
-        <div className="w-full md:w-1/2 md:aspect-square md:order-2">
+      <section className="p-0 md:pt-12 md:px-12 flex flex-col md:flex-row md:gap-6">
+        <div className="w-full md:w-1/2 h-fit md:order-2">
           <GalleryCarousel images={product.images} />
         </div>
 
-        <div className="details w-full md:w-1/2 md:aspect-square px-4 flex flex-col gap-6">
+        <div className="details w-full md:w-1/2 md:aspect-[4/3] px-4 flex flex-col gap-6">
           <div className="w-full flex flex-col gap-1">
             <h2 className="capitalize hidden md:flex">{product.name}</h2>
             <h3 className="capitalize md:hidden">{product.name}</h3>
@@ -68,8 +68,8 @@ export default async function ProductPage({
 
       <hr className="border-foreground-faded my-8 md:my-2" />
 
-      <section className="md:pt-0">
-        <h3 className="capitalize mb-4">you may also like</h3>
+      <section className="md:pt-0  flex flex-col gap-6 ">
+        <h3 className="capitalize">you may also like</h3>
 
         <HorizontalGallery products={similarProducts} />
 

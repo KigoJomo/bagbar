@@ -48,7 +48,7 @@ const GalleryCarousel: React.FC<GalleryCarouselProps> = ({ images, className }) 
   };
 
   return (
-    <div className={`w-full flex flex-col md:flex-row gap-2 ${className}`}>
+    <div className={`w-full md:aspect-[4/3.22] flex flex-col md:flex-row gap-2 ${className}`}>
       {/* Main Image Carousel */}
       <div className="relative aspect-square md:w-4/5">
         <Slider {...mainSettings} ref={mainSliderRef}>
@@ -59,7 +59,7 @@ const GalleryCarousel: React.FC<GalleryCarouselProps> = ({ images, className }) 
               alt={`Product view ${index + 1}`}
               width={1200}
               height={1200}
-              className="w-full aspect-square object-cover"
+              className="w-full aspect-square object-cover border border-foreground-faded"
             />
           ))}
         </Slider>

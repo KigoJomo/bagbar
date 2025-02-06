@@ -6,6 +6,7 @@ import Link from 'next/link';
 import CtaButton from './CtaButton';
 import { Product } from '@/types/declarations';
 import { FC } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface CartViewProps {
   className?: string;
@@ -14,7 +15,9 @@ interface CartViewProps {
 
 const CartView: React.FC<CartViewProps> = ({ className, onClose }) => {
   const { isLoggedIn } = useAuth();
-  const { cart, updateCartQuantity, removeFromCart } = useShop();
+  const { cart, updateCartQuantity, removeFromCart, updatingCart } = useShop();
+
+  const router = useRouter();
 
   // Calculate total price
   const total = cart.reduce(
@@ -30,6 +33,11 @@ const CartView: React.FC<CartViewProps> = ({ className, onClose }) => {
       </div>
     );
   }
+
+  const proceedToCheckout = () => {
+    onClose();
+    router.push('/checkout');
+  };
 
   return (
     <div className={`w-full h-[90%] flex flex-col gap-4 ${className}`}>
@@ -51,6 +59,7 @@ const CartView: React.FC<CartViewProps> = ({ className, onClose }) => {
                   updateCartQuantity(item.product.id, newQty)
                 }
                 onRemove={() => removeFromCart(item.product.id)}
+                upDatingCart={updatingCart}
               />
             ))}
           </div>
@@ -61,9 +70,7 @@ const CartView: React.FC<CartViewProps> = ({ className, onClose }) => {
               <span className="font-medium">Ksh {total.toLocaleString()}</span>
             </div>
 
-            <Link href="/checkout" onClick={onClose} className="block w-full">
-              <CtaButton label="Proceed to Checkout" className="w-full" />
-            </Link>
+            <CtaButton label="Proceed to Checkout" className="w-full" onClick={proceedToCheckout} />
           </div>
         </>
       )}
@@ -79,9 +86,15 @@ interface CartItemProps {
   onClose: () => void;
   onUpdate: (newQuantity: number) => void;
   onRemove: () => void;
+  upDatingCart: boolean;
 }
 
-const CartItem: FC<CartItemProps> = ({ item, onClose, onUpdate }) => {
+const CartItem: FC<CartItemProps> = ({
+  item,
+  onClose,
+  onUpdate,
+  upDatingCart,
+}) => {
   return (
     <div className="w-full group flex gap-2 pb-4 border-b border-foreground-faded">
       <div className="w-1/4 aspect-[3/4] overflow-hidden">
@@ -95,7 +108,7 @@ const CartItem: FC<CartItemProps> = ({ item, onClose, onUpdate }) => {
       </div>
 
       <div className="w-3/4 aspect-[9/4] flex flex-col justify-between">
-        <h5 className="capitalize font-semibold">{item.product.name}</h5>
+        <h5 className="capitalize font-semibold truncate">{item.product.name}</h5>
 
         <div className="flex items-center justify-between">
           <p className="italic">
@@ -105,13 +118,26 @@ const CartItem: FC<CartItemProps> = ({ item, onClose, onUpdate }) => {
           <div className="quantity-update-buttons flex items-center gap-2">
             <button
               onClick={() => onUpdate(item.quantity - 1)}
-              className="px-2 border rounded-none md:hover:bg-foreground-faded">
+              className={`px-2 border rounded-none md:hover:bg-foreground-faded ${
+                upDatingCart && 'cursor-not-allowed opacity-25'
+              }`}
+              disabled={upDatingCart}>
               -
             </button>
-            <span>{item.quantity}</span>
+            {upDatingCart ? (
+              <div className="w-4 h-4 rounded-full border-t-2 border-l-2 border-b-2 border-r-2 border-foreground border-r-transparent animate-spin"></div>
+            ) : (
+              <>
+                <span>{item.quantity}</span>
+              </>
+            )}
+
             <button
               onClick={() => onUpdate(item.quantity + 1)}
-              className="px-2 border rounded-none md:hover:bg-foreground-faded">
+              className={`px-2 border rounded-none md:hover:bg-foreground-faded ${
+                upDatingCart && 'cursor-not-allowed opacity-25'
+              }`}
+              disabled={upDatingCart}>
               +
             </button>
           </div>
