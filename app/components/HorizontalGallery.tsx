@@ -12,7 +12,7 @@ const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ products }) => {
       {products.map((product, index) => (
         <ProductCard
           key={index}
-          className="w-1/3 md:w-1/5"
+          className="w-[60vw] md:w-1/4 flex-shrink-0"
           product={product}
         />
       ))}

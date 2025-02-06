@@ -1,7 +1,7 @@
 import CartButton from '@/app/components/CartButton';
 import FavsButton from '@/app/components/FavsButton';
+import GalleryCarousel from '@/app/components/GalleryCarousel';
 import HorizontalGallery from '@/app/components/HorizontalGallery';
-import ImageCarousel from '@/app/components/ImageCarousel';
 import { supabase } from '@/lib/supabase/client';
 import { Product } from '@/types/declarations';
 import { PostgrestError } from '@supabase/supabase-js';
@@ -31,14 +31,15 @@ export default async function ProductPage({
 
   return (
     <>
-      <section className="p-0 md:px-8 flex flex-col md:flex-row md:gap-6">
-        <div className="w-full md:w-1/2 md:order-2">
-          <ImageCarousel images={product.images} />
+      <section className="p-0 md:px-12 flex flex-col md:flex-row md:gap-6">
+        <div className="w-full md:w-1/2 md:aspect-square md:order-2">
+          <GalleryCarousel images={product.images} />
         </div>
 
-        <div className="details w-full md:w-1/2 md:aspect-square flex flex-col gap-6">
+        <div className="details w-full md:w-1/2 md:aspect-square px-4 flex flex-col gap-6">
           <div className="w-full flex flex-col gap-1">
-            <h2 className="capitalize">{product.name}</h2>
+            <h2 className="capitalize hidden md:flex">{product.name}</h2>
+            <h3 className="capitalize md:hidden">{product.name}</h3>
             <p className="capitalize ml-2 pl-2 border-l-4 border-accent">
               ksh {product.price.toLocaleString()}
             </p>
