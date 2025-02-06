@@ -42,7 +42,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
-          className={`p-4 rounded-none shadow-lg text-sm border ${
+          className={`p-4 rounded-none shadow-lg text-sm border flex items-center ${
             toast.type === 'success'
           ? 'bg-green-100 text-green-800 border-green-800'
           : toast.type === 'error'

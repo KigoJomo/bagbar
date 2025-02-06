@@ -27,7 +27,7 @@ const SideMenu = ({ isOpen, onClose, position, children, className }: SideMenuPr
       <div
         className={`fixed z-50 top-[4%] ${
           position === 'left' ? 'left-[4%] md:left-[2%]' : 'right-[4%] md:right-[2%]'
-        } h-[92%] w-[92%] md:w-1/3 bg-background border border-dashed border-foreground p-6 md:px-12 transform transition-transform duration-300 ${
+        } h-[92%] w-[92%] md:w-1/3 bg-background border border-dashed border-foreground p-6 md:px-12 transform transition-all duration-300 ${
           isOpen ? 'translate-x-0' : position === 'left' ? '-translate-x-[120%]' : 'translate-x-[120%]'
         }`}
       >

@@ -26,8 +26,8 @@ const features = [
 const Page: NextPage = () => {
   return (
     <>
-      <section className="flex flex-col items-center gap-8">
-        <div className="w-full">
+      <section className="flex flex-col items-center gap-8 px-0">
+        <div className="w-full px-6 md:px-12">
           <SplitTitle text="about bag-bar" />
         </div>
 
@@ -42,7 +42,7 @@ const Page: NextPage = () => {
                 className="w-full aspect-[4/3]"
               />
 
-              <p className="w-full md:aspect-[4/3] md:flex md:items-center">
+              <p className="w-full md:aspect-[4/3] md:flex md:items-center px-4 md:px-0">
                 Founded in Nairobi (2024), Bag-Bar has become East Africa&apos;s
                 premier destination for curated armpit bags. We scour global
                 markets to bring you the perfect fusion of urban functionality
@@ -52,13 +52,13 @@ const Page: NextPage = () => {
             </div>
 
             <br />
-            <hr className="" />
+            <hr className="border-foreground-faded" />
             <br />
 
             <div className="grid md:grid-cols-2 gap-8">
               <div className="w-full md:aspect-[4/3] flex flex-col md:justify-center gap-2">
-                <h3 className="font-semibold">Curator&apos;s Eye</h3>
-                <p className="text-foreground-light">
+                <h3 className="font-semibold px-4 md:px-0">Curator&apos;s Eye</h3>
+                <p className="text-foreground-light px-4 md:px-0">
                   Our team carefully selects the finest armpit bags from global
                   designers. <br /> Each piece is meticulously evaluated to meet
                   our high standards of quality and style for our discerning
@@ -77,7 +77,7 @@ const Page: NextPage = () => {
           </div>
         </Section>
 
-        <Section title="Our Retail Philosophy">
+        <Section title="Our Retail Philosophy px-0">
           <div className="grid grid-cols-1 gap-8 pl-4 md:px-12">
             {features.map((feature, index) => (
               <FeatureSection

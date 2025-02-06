@@ -61,16 +61,17 @@ const FavsButton: React.FC<FavsButtonProps> = ({
       }
       disabled={loading}>
       {loading ? (
-        <div className='w-4 h-4 rounded-full border-t-2 border-l-2 border-b-2 border-r-2 border-background border-r-transparent animate-spin'>
+        <div className='w-4 h-4 rounded-full border-t-2 border-l-2 border-b-2 border-r-2 border-foreground border-r-transparent animate-spin'>
         </div>
       ) : (
         <>
           <Heart
             size={16}
             className={`${
-              isFavorite && !showText
-                ? 'fill-white stroke-white'
-                : 'fill-transparent stroke-foreground'
+              isFavorite && showText ? 'fill-foreground stroke-foreground-' :
+              !isFavorite && showText ? 'fill-transparent stroke-foreground' :
+              isFavorite && !showText ? 'fill-white stroke-white' :
+              !isFavorite && !showText ? 'fill-transparent stroke-white' : ''
             } transition-all duration-300`}
           />
           {showText && (

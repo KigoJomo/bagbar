@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     { name: 'about us', href: '/about' },
     { name: 'collection', href: '/products' },
     { name: 'contact us', href: '/contact' },
-    { name: 'my account', href: isLoggedIn ? '/account' : '/auth/login' },
+    { name: isLoggedIn ? 'my account' : 'login', href: isLoggedIn ? '/account' : '/auth/login' },
   ];
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const Header: React.FC = () => {
             <AlignLeft />
           </button>
 
-          <Link href="/" className="">
+          <Link href="/" className="" onClick={() => setMenuOpen(false)}>
             <Image
               src={
                 theme === 'dark'
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
         onClose={() => setMenuOpen(false)}
         position="left">
         <div className="w-full h-[90%] flex flex-col gap-2">
-          <Link href="/" className="">
+          <Link href="/" className="" onClick={() => setMenuOpen(false)}>
             <Image
               src={
                 theme === 'dark' ? '/images/logo.webp' : '/images/logo-dark.webp'
