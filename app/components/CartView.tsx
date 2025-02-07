@@ -83,7 +83,7 @@ interface CartItemProps {
     product: Product;
     quantity: number;
   };
-  onClose: () => void;
+  onClose?: () => void;
   onUpdate: (newQuantity: number) => void;
   onRemove: () => void;
   upDatingCart: boolean;
@@ -156,3 +156,5 @@ const CartItem: FC<CartItemProps> = ({
 };
 
 export default CartView;
+
+export { CartItem };

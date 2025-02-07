@@ -115,6 +115,25 @@ img {
   display: none;
 }
 
+.scrollbar-custom::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: var(--background-faded);
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: var(--foreground-faded);
+  transition: all .3s ease;
+  cursor: pointer;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground-light);
+}
+
 .close-cursor {
   cursor: url('/images/close-cursor.webp'), auto;
 }
