@@ -24,9 +24,9 @@ const MpesaForm: FC = () => {
     setLoading(true);
 
     // Validate phone number format (254xxxxxxxxx)
-    const phoneRegex = /^2547\d{8}$/;
+    const phoneRegex = /^2547\d{8}|2541\d{8}$/;
     if (!phoneRegex.test(phoneNumber)) {
-      showToast('Invalid phone number format. Use 2547XXXXXXXX', 'error');
+      showToast('Invalid phone number format. Use 254XXXXXXXXX', 'error');
       setLoading(false);
       return;
     }
