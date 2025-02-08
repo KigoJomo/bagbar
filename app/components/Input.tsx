@@ -29,14 +29,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={cn(
-              'w-full rounded-none border border-foreground-light outline-none px-4 py-2 bg-transparent transition-all duration-300',
+              'w-full rounded-none border border-foreground-light outline-none px-4 py-2 bg-transparent',
               'focus:outline-none focus:border-accent',
               'disabled:cursor-not-allowed disabled:border-foreground-faded',
               startIcon ? 'pl-10' : 'pl-4',
               error
                 ? 'border-red-500 focus:border-red-500 '
                 : '',
-              className
+              className,
+              'transition-all duration-300'
             )}
             aria-invalid={!!error}
             aria-describedby={error ? `${props.id}-error` : undefined}
