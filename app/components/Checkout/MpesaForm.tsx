@@ -65,10 +65,10 @@ const MpesaForm: FC = () => {
           label="M-Pesa Phone Number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))} // Numbers only
-          placeholder="254712345678"
-          pattern="^2547\d{8}$"
-          required
-        />
+            placeholder="254712345678"
+            pattern="^(2547\d{8}|2541\d{8})$"
+            required
+          />
 
         <div className="p-4 bg-foreground-faded/10 border border-foreground-faded flex gap-2">
           <BadgeInfo className="flex-shrink-0 text-accent" size={18} />
