@@ -1,21 +1,63 @@
 // app/components/Checkout/MpesaForm.tsx
 
 'use client';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Input } from '../Input';
 import { BadgeInfo, Loader2 } from 'lucide-react';
 import { useShop } from '@/context/ShopContext';
 import { useToast } from '@/context/toast-context';
 import CtaButton from '../CtaButton';
+import { supabase } from '@/lib/supabase/client';
 
 const MpesaForm: FC = () => {
+  const [user, setUser] = useState<{
+    email: string;
+    first_name?: string;
+    last_name?: string;
+  } | null>(null);
+
   const { cart } = useShop();
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { session },
+        error: authError,
+      } = await supabase.auth.getSession();
+
+      if (authError || !session) {
+        return;
+      };
+
+      try{
+        const {data: { user: authUser }} = await supabase.auth.getUser();
+
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', authUser?.id)
+          .single();
+
+        if (authUser) {
+          setUser({
+            email: authUser.email || '',
+            last_name: profileData?.last_name || '',
+            first_name: profileData?.first_name || '',
+          });
+        }
+      } catch (error) {
+        console.error('User fetch error:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const total = cart.reduce(
-    (sum, item) => sum + (item.product.price * item.quantity),
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
@@ -38,12 +80,14 @@ const MpesaForm: FC = () => {
         body: JSON.stringify({
           amount: total,
           phoneNumber,
-          reference: `BB-${Date.now()}`, // Unique transaction reference
+          firstName: user?.first_name,
+          lastName: user?.last_name,
+          email: user?.email,
         }),
       });
 
       const data = await res.json();
-      
+
       if (!res.ok) throw new Error(data.error || 'Payment initiation failed');
 
       showToast('Payment request sent! Check your phone', 'success');
@@ -65,21 +109,23 @@ const MpesaForm: FC = () => {
           label="M-Pesa Phone Number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))} // Numbers only
-            placeholder="254712345678"
-            pattern="^(2547\d{8}|2541\d{8})$"
-            required
-          />
+          placeholder="254712345678"
+          pattern="^(2547\d{8}|2541\d{8})$"
+          required
+        />
 
         <div className="p-4 bg-foreground-faded/10 border border-foreground-faded flex gap-2">
           <BadgeInfo className="flex-shrink-0 text-accent" size={18} />
           <p className="text-sm">
-            You&apos;ll receive a payment prompt on your phone. 
-            Enter your M-Pesa PIN to complete the transaction.
+            You&apos;ll receive a payment prompt on your phone. Enter your
+            M-Pesa PIN to complete the transaction.
           </p>
         </div>
 
-        <CtaButton 
-          label={loading ? 'Processing...' : `Pay Ksh ${total.toLocaleString()}`}
+        <CtaButton
+          label={
+            loading ? 'Processing...' : `Pay Ksh ${total.toLocaleString()}`
+          }
           icon={loading ? <Loader2 className="animate-spin" /> : undefined}
           disabled={loading}
         />

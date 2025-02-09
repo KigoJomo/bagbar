@@ -15,7 +15,8 @@ export default function AccountPage() {
   const [user, setUser] = useState<{
     id: string;
     email: string;
-    full_name?: string;
+    first_name?:string;
+    last_name?: string;
     email_confirmed_at?: string | null;
   } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -41,7 +42,7 @@ export default function AccountPage() {
         } = await supabase.auth.getUser();
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('full_name')
+          .select('first_name, last_name')
           .eq('id', authUser?.id)
           .single();
 
@@ -49,7 +50,8 @@ export default function AccountPage() {
           setUser({
             id: authUser.id,
             email: authUser.email || '',
-            full_name: profileData?.full_name || '',
+            last_name: profileData?.last_name || '',
+            first_name: profileData?.first_name || '',
             email_confirmed_at: authUser.email_confirmed_at,
           });
         }
@@ -80,7 +82,7 @@ export default function AccountPage() {
     try {
       // Update auth metadata first
       const { error: authError } = await supabase.auth.updateUser({
-        data: { full_name: user.full_name },
+        email: user.email,
       });
 
       if (authError) throw authError;
@@ -88,7 +90,7 @@ export default function AccountPage() {
       // Update profiles table
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({ full_name: user.full_name })
+        .update({ first_name: user.first_name, last_name: user.last_name })
         .eq('id', user.id);
 
       if (profileError) throw profileError;
@@ -99,7 +101,8 @@ export default function AccountPage() {
       } = await supabase.auth.getUser();
       setUser((prev) => ({
         ...prev!,
-        full_name: user.full_name,
+        first_name: freshUser?.user_metadata.first_name,
+        last_name: freshUser?.user_metadata.last_name,
         email_confirmed_at: freshUser?.email_confirmed_at,
       }));
 
@@ -148,14 +151,24 @@ export default function AccountPage() {
             </div>
 
             <div className="space-y-4">
-              <Input
-                label="Full Name"
-                value={user?.full_name || ''}
-                onChange={(e) =>
-                  setUser({ ...user!, full_name: e.target.value })
-                }
-                disabled={!editMode}
-              />
+              <div className="w-full flex flex-col md:flex-row gap-2">
+                <Input
+                  label="First Name"
+                  value={user?.first_name || ''}
+                  onChange={(e) =>
+                    setUser({ ...user!, first_name: e.target.value })
+                  }
+                  disabled={!editMode}
+                />
+                <Input
+                  label="Last Name"
+                  value={user?.last_name || ''}
+                  onChange={(e) =>
+                    setUser({ ...user!, last_name: e.target.value })
+                  }
+                  disabled={!editMode}
+                />
+              </div>
 
               <div className="space-y-2">
                 <Input

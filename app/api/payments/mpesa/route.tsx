@@ -1,15 +1,19 @@
 // app/api/payments/mpesa/route.ts
 import { NextResponse } from 'next/server';
+import IntaSend from 'intasend-node';
 
 interface MpesaRequest {
   amount: number;
   phoneNumber: string;
-  reference: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export async function POST(req: Request) {
   try {
-    const { amount, phoneNumber, reference }: MpesaRequest = await req.json();
+    const { amount, phoneNumber, firstName, lastName, email }: MpesaRequest =
+      await req.json();
 
     // Validate input
     if (!phoneNumber || !amount || amount <= 0) {
@@ -19,36 +23,30 @@ export async function POST(req: Request) {
       );
     }
 
-    // Initiate payment with Instasend
-    const response = await fetch(`${process.env.INSTA_API_URL}/mpesa/stk-push`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.INSTA_API_KEY}`,
-      },
-      body: JSON.stringify({
-        amount: Math.round(amount), // Ensure whole number
-        phone: phoneNumber,
-        reference,
-        callback_url: `${process.env.NEXTAUTH_URL}/api/payments/webhook`,
-      }),
-    });
+    const instasend = new IntaSend(
+      process.env.INSTA_API_KEY,
+      process.env.INSTA_API_SECRET,
+      true
+    );
 
-    const data = await response.json();
+    const collection = instasend.collection();
 
-    if (!response.ok) {
-      console.error('Instasend Error:', data);
-      return NextResponse.json(
-        { error: data.message || 'Payment initiation failed' },
-        { status: response.status }
-      );
-    }
-
-    return NextResponse.json({
-      message: 'Payment request initiated',
-      checkoutId: data.checkout_id,
-    });
-
+    collection
+      .mpesaStkPush({
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone_number: phoneNumber,
+        host: 'bagbar.vercel.app',
+        amount: amount,
+        api_ref: 'test',
+      })
+      .then((response) => {
+        console.log(`STK Push Response ${response}`);
+      })
+      .catch((error) => {
+        console.error(`STK Push Error ${error}`);
+      });
   } catch (error) {
     console.error('M-Pesa Processing Error:', error);
     return NextResponse.json(

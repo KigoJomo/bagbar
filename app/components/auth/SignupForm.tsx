@@ -25,7 +25,8 @@ export default function SignupForm() {
         password: formData.get('password') as string,
         options: {
           data: {
-            full_name: formData.get('full_name'),
+            first_name: formData.get('first_name'),
+            last_name: formData.get('last_name'),
           },
           emailRedirectTo: `${location.origin}/auth/callback`,
         },
@@ -44,11 +45,20 @@ export default function SignupForm() {
     <div className="w-full max-w-md mx-auto space-y-6">
       <form onSubmit={handleSignup} className="w-full space-y-6">
         <div className="space-y-4">
+
           <Input
-            id="full_name"
-            name="full_name"
+            id="first_name"
+            name="first_name"
             type="text"
-            placeholder="Your full name"
+            placeholder="First name"
+            required
+          />
+
+          <Input
+            id="last_name"
+            name="last_name"
+            type="text"
+            placeholder="Last name"
             required
           />
 
@@ -74,7 +84,13 @@ export default function SignupForm() {
         <CtaButton
           label={loading ? 'Creating account...' : 'Sign Up'}
           hideIcon
-          icon={loading? <LoaderCircle size={16} className='animate-spin'/> : <LogIn size={16} />}
+          icon={
+            loading ? (
+              <LoaderCircle size={16} className="animate-spin" />
+            ) : (
+              <LogIn size={16} />
+            )
+          }
           type="submit"
           disabled={loading}
         />
