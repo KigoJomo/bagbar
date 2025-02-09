@@ -19,6 +19,7 @@ const Header: React.FC = () => {
   const { cart } = useShop();
   const { favorites } = useShop();
   const { isLoggedIn } = useAuth();
+  const role = useAuth().user?.role;
 
   const pathname = usePathname();
   const hideHeader = pathname.match(/^\/(?:auth|admin)/);
@@ -31,7 +32,10 @@ const Header: React.FC = () => {
     { name: 'about us', href: '/about' },
     { name: 'collection', href: '/products' },
     { name: 'contact us', href: '/contact' },
-    { name: isLoggedIn ? 'my account' : 'login', href: isLoggedIn ? '/account' : '/auth/login' },
+    {
+      name: isLoggedIn ? 'my account' : 'login',
+      href: isLoggedIn ? '/account' : '/auth/login',
+    },
   ];
 
   useEffect(() => {
@@ -142,6 +146,14 @@ const Header: React.FC = () => {
             className="hidden md:flex uppercase text-sm border-b-2 border-transparent hover:border-foreground transition-all duration-500">
             {isLoggedIn ? 'account' : 'login'}
           </Link>
+
+          {role === 'admin' && (
+            <Link
+              href={'/admin'}
+              className="hidden md:flex uppercase text-sm border-b-2 border-transparent hover:border-foreground transition-all duration-500">
+              admin
+              </Link>
+          )}
         </div>
       </div>
 
@@ -154,7 +166,9 @@ const Header: React.FC = () => {
           <Link href="/" className="" onClick={() => setMenuOpen(false)}>
             <Image
               src={
-                theme === 'dark' ? '/images/logo.webp' : '/images/logo-dark.webp'
+                theme === 'dark'
+                  ? '/images/logo.webp'
+                  : '/images/logo-dark.webp'
               }
               alt="Cordova Logo"
               width={100}

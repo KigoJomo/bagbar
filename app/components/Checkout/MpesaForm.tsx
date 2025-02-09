@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase/client';
 
 const MpesaForm: FC = () => {
   const [user, setUser] = useState<{
+    userId: string;
     email: string;
     first_name?: string;
     last_name?: string;
@@ -30,10 +31,12 @@ const MpesaForm: FC = () => {
 
       if (authError || !session) {
         return;
-      };
+      }
 
-      try{
-        const {data: { user: authUser }} = await supabase.auth.getUser();
+      try {
+        const {
+          data: { user: authUser },
+        } = await supabase.auth.getUser();
 
         const { data: profileData } = await supabase
           .from('profiles')
@@ -43,6 +46,7 @@ const MpesaForm: FC = () => {
 
         if (authUser) {
           setUser({
+            userId: authUser.id,
             email: authUser.email || '',
             last_name: profileData?.last_name || '',
             first_name: profileData?.first_name || '',
@@ -78,11 +82,17 @@ const MpesaForm: FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          userId: user?.userId,
           amount: total,
           phoneNumber,
           firstName: user?.first_name,
           lastName: user?.last_name,
           email: user?.email,
+          orderItems: cart.map((item) => ({
+            product_id: item.product.id,
+            quantity: item.quantity,
+            price: item.product.price,
+          })),
         }),
       });
 
@@ -91,6 +101,8 @@ const MpesaForm: FC = () => {
       if (!res.ok) throw new Error(data.error || 'Payment initiation failed');
 
       showToast('Payment request sent! Check your phone', 'success');
+
+      console.log(data);
     } catch (error) {
       showToast('Payment failed. Please try again', 'error');
       console.log(error);

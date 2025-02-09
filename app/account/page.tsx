@@ -15,7 +15,7 @@ export default function AccountPage() {
   const [user, setUser] = useState<{
     id: string;
     email: string;
-    first_name?:string;
+    first_name?: string;
     last_name?: string;
     email_confirmed_at?: string | null;
   } | null>(null);
@@ -224,57 +224,39 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {role === 'admin' ? (
-          <div className='border-b border-foreground-faded pb-6'>
-            <h3 className='uppercase text-sm font-medium mb-4'>Admin Panel</h3>
+        <div className="order-history border-b border-foreground-faded pb-6">
+          <h3 className="uppercase text-sm font-medium mb-4">Order History</h3>
 
-            <hr className='bg-foreground-faded my-6' />
-
-            <div className='space-y-4 px-6'>
-              <CtaButton
-                label='Manage Products'
-                secondary
-                onClick={() => router.push('/admin/products/add')}
-              />
-              <CtaButton
-                label='Manage Orders'
-                secondary
-                onClick={() => router.push('/admin/orders')}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="order-history border-b border-foreground-faded pb-6">
-            <h3 className="uppercase text-sm font-medium mb-4">
-              Order History
-            </h3>
-
-            {orders.length === 0 ? (
-              <p className="text-foreground-light">No orders found</p>
-            ) : (
-              <div className="space-y-4">
-                {orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="border rounded-md p-4 hover:border-foreground transition-colors">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium">
-                        #{order.id.slice(0, 8)}
-                      </span>
-                      <span>${order.total}</span>
-                    </div>
-                    <div className="flex justify-between text-sm text-foreground-light">
-                      <span>
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </span>
-                      <span className="capitalize">{order.status}</span>
-                    </div>
+          {orders.length === 0 ? (
+            <p className="text-foreground-light">No orders found</p>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => (
+                <div
+                  key={order.id}
+                  className="border border-foreground-faded p-4 hover:border-foreground transition-all duration-300">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
+                    <span>Ksh {order.total}</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                  <div className="flex justify-between text-sm text-foreground-light">
+                    <span>
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </span>
+                    <span
+                      className={`capitalize ${
+                        order.status === 'completed'
+                          ? 'text-green-500'
+                          : 'text-yellow-500'
+                      }`}>
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <CtaButton

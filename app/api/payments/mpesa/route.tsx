@@ -1,19 +1,22 @@
 // app/api/payments/mpesa/route.ts
 import { NextResponse } from 'next/server';
 import IntaSend from 'intasend-node';
+import { createNewOrder, OrderItem } from '@/lib/supabase/queries';
 
 interface MpesaRequest {
+  userId: string;
   amount: number;
   phoneNumber: string;
   firstName: string;
   lastName: string;
   email: string;
+  orderItems: OrderItem[]
 }
 
 export async function POST(req: Request) {
   try {
     // Parse and validate the incoming request body
-    const { amount, phoneNumber, firstName, lastName, email }: MpesaRequest = await req.json();
+    const { userId, amount, phoneNumber, firstName, lastName, email, orderItems }: MpesaRequest = await req.json();
 
     if (!phoneNumber || !amount || amount <= 0) {
       return NextResponse.json(
@@ -47,6 +50,17 @@ export async function POST(req: Request) {
     });
 
     console.log('STK Push Response:', response);
+    const invoice_id = await response.invoice.invoice_id;
+
+    // Save the order details to the database
+    const newOrder = createNewOrder({
+      user_id: userId,
+      total: amount,
+      status: 'pending',
+      invoice_id: invoice_id,
+    }, orderItems)
+
+    console.log('New Order:', newOrder);
 
     // Return a success response to the client
     return NextResponse.json({
