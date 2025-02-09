@@ -91,7 +91,6 @@ const MpesaForm: FC = () => {
       if (!res.ok) throw new Error(data.error || 'Payment initiation failed');
 
       showToast('Payment request sent! Check your phone', 'success');
-      // Handle order creation in background via webhook
     } catch (error) {
       showToast('Payment failed. Please try again', 'error');
       console.log(error);

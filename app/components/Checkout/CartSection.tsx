@@ -7,7 +7,6 @@ import { CartItem } from '../CartView';
 
 const CartSection: FC = () => {
   const { cart, updateCartQuantity, removeFromCart, updatingCart } = useShop();
-  console.log(cart);
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
