@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     const invoice_id = await response.invoice.invoice_id;
 
     // Save the order details to the database
-    const newOrder = createNewOrder({
+    const newOrder = await createNewOrder({
       user_id: userId,
       total: amount,
       status: 'pending',
