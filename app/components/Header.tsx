@@ -36,8 +36,11 @@ const Header: React.FC = () => {
       name: isLoggedIn ? 'my account' : 'login',
       href: isLoggedIn ? '/account' : '/auth/login',
     },
+    ...(role === 'admin' ? [{ name: 'admin', href: '/admin' }] : [])
   ];
 
+
+  // handle esc key and back button
   useEffect(() => {
     // Handle ESC key
     const handleEscKey = (event: { key: string }) => {

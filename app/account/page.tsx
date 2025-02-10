@@ -142,8 +142,42 @@ export default function AccountPage() {
       )}
 
       <div className="grid md:grid-cols-2 gap-8">
+        <div id='order-history' className="order-history border-b border-foreground-faded pb-6">
+          <h3 className="uppercase text-sm font-medium mb-4">Order History</h3>
+
+          {orders.length === 0 ? (
+            <p className="text-foreground-light">No orders found</p>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => (
+                <div
+                  key={order.id}
+                  className="border border-foreground-faded p-4 hover:border-foreground transition-all duration-300">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
+                    <span>Ksh {order.total}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-foreground-light">
+                    <span>
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </span>
+                    <span
+                      className={`capitalize ${
+                        order.status === 'completed'
+                          ? 'text-green-500'
+                          : 'text-yellow-500'
+                      }`}>
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Account Details */}
-        <div className="space-y-6">
+        <div id='account-details' className="space-y-6">
           <div className="border-b border-foreground-faded pb-6">
             <div className="flex items-center gap-4 mb-4">
               <h3 className="uppercase text-sm font-medium">Account Details</h3>
@@ -222,40 +256,6 @@ export default function AccountPage() {
               )}
             </div>
           </div>
-        </div>
-
-        <div className="order-history border-b border-foreground-faded pb-6">
-          <h3 className="uppercase text-sm font-medium mb-4">Order History</h3>
-
-          {orders.length === 0 ? (
-            <p className="text-foreground-light">No orders found</p>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="border border-foreground-faded p-4 hover:border-foreground transition-all duration-300">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
-                    <span>Ksh {order.total}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-foreground-light">
-                    <span>
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </span>
-                    <span
-                      className={`capitalize ${
-                        order.status === 'completed'
-                          ? 'text-green-500'
-                          : 'text-yellow-500'
-                      }`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 

@@ -49,7 +49,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           ? 'bg-red-100 text-red-800 border-red-800'
           : 'bg-blue-100 text-blue-800 border-blue-800'
           }`}>
-          <span className="text-nowrap">{toast.message}</span>
+          <span className="text-nowrap whitespace-pre-wrap">{toast.message}</span>
           <button
             onClick={() =>
           setToasts((prev) => prev.filter((t) => t.id !== toast.id))

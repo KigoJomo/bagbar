@@ -62,10 +62,10 @@ export async function POST(req: Request) {
 
     console.log('New Order:', newOrder);
 
-    // Return a success response to the client
     return NextResponse.json({
       success: 'Payment request sent',
       data: response,
+      redirectUrl: '/account'
     });
   } catch (error) {
     console.error('M-Pesa Processing Error:', error);

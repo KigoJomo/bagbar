@@ -8,7 +8,7 @@ import { useShop } from '@/context/ShopContext';
 import { useToast } from '@/context/toast-context';
 import CtaButton from '../CtaButton';
 import { supabase } from '@/lib/supabase/client';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const MpesaForm: FC = () => {
   const [user, setUser] = useState<{
@@ -22,6 +22,7 @@ const MpesaForm: FC = () => {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -102,13 +103,11 @@ const MpesaForm: FC = () => {
 
       if (!res.ok) throw new Error(data.error || 'Payment initiation failed');
 
-      showToast('Payment request sent! Check your phone', 'success');
+      showToast('Payment request sent!\nComplete the transaction to place your order.', 'success');
 
-      // redirect to account page
-      router.push('/account');
-
-      // BETA
-      showToast("Order Created! Check your account page for details", "info");
+      if(data.redirectUrl) {
+        router.push(data.redirectUrl);
+      }
 
       console.log(data);
     } catch (error) {
