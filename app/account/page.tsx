@@ -1,12 +1,16 @@
+// app/account/page.tsx
+
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { Input } from '@/app/components/Input';
 import CtaButton from '@/app/components/CtaButton';
-import { Order } from '@/types/declarations';
+import { Order, OrderItem, Product } from '@/types/declarations';
 import { LoaderCircle, LogOut, SquareCheckBig, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { getOrderItems, getUserOrders } from '@/lib/supabase/queries';
+import Image from 'next/image';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -25,17 +29,17 @@ export default function AccountPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const {
-        data: { session },
-        error: authError,
-      } = await supabase.auth.getSession();
-
-      if (authError || !session) {
-        router.push('/auth/login');
-        return;
-      }
-
       try {
+        const {
+          data: { session },
+          error: authError,
+        } = await supabase.auth.getSession();
+
+        if (authError || !session) {
+          router.push('/auth/login');
+          return;
+        }
+
         // Get combined auth and profile data
         const {
           data: { user: authUser },
@@ -47,23 +51,30 @@ export default function AccountPage() {
           .single();
 
         if (authUser) {
-          setUser({
+          // Use authUser directly rather than waiting for user state to update
+          const currentUser = {
             id: authUser.id,
             email: authUser.email || '',
             last_name: profileData?.last_name || '',
             first_name: profileData?.first_name || '',
             email_confirmed_at: authUser.email_confirmed_at,
-          });
+          };
+          setUser(currentUser);
+
+          // Fetch orders using authUser.id
+          const ordersData = await getUserOrders(authUser.id);
+
+          const ordersWithItems = await Promise.all(
+            ordersData.map(async (order) => {
+              // Attach the order items (which now include product details)
+              const orderItems = await getOrderItems(order.id);
+              // Use consistent naming: if your type uses order_items, then:
+              return { ...order, order_items: orderItems };
+            })
+          );
+
+          setOrders(ordersWithItems);
         }
-
-        // Get user orders
-        const { data: ordersData } = await supabase
-          .from('orders')
-          .select('*, order_items(*)')
-          .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false });
-
-        setOrders(ordersData || []);
       } catch (error) {
         console.error('Data fetch error:', error);
       } finally {
@@ -130,10 +141,10 @@ export default function AccountPage() {
   }
 
   return (
-    <section className="space-y-8">
+    <section className="flex flex-col gap-8">
       <h2 className="uppercase">My Account</h2>
 
-      <hr className="border-foreground-faded mb-8" />
+      <hr className="border-foreground-faded m-0" />
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -141,122 +152,162 @@ export default function AccountPage() {
         </div>
       )}
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div id='order-history' className="order-history border-b border-foreground-faded pb-6">
-          <h3 className="uppercase text-sm font-medium mb-4">Order History</h3>
+      <div className="grid grid-cols-1 md:px-24">
+        <details
+          id="order-history"
+          className="order-history border-b border-foreground-faded pb-2 flex flex-col gap-4">
+          <summary className="uppercase text-lg text-accent font-medium">
+            Order History
+          </summary>
 
           {orders.length === 0 ? (
             <p className="text-foreground-light">No orders found</p>
           ) : (
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className="border border-foreground-faded p-4 hover:border-foreground transition-all duration-300">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
+                  className="p-4 bg-foreground-faded flex flex-col gap-2 transition-all duration-300">
+                  <div className="flex justify-between">
+                    <span className="font-bold">#{order.id.slice(0, 8)}</span>
                     <span>Ksh {order.total}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-foreground-light">
-                    <span>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-foreground-light">
                       {new Date(order.created_at).toLocaleDateString()}
                     </span>
                     <span
                       className={`capitalize ${
                         order.status === 'completed'
-                          ? 'text-green-500'
-                          : 'text-yellow-500'
+                          ? 'text-green-600'
+                          : 'text-yellow-600'
                       }`}>
                       {order.status}
                     </span>
                   </div>
+
+                  {/* Display order items/products under each order */}
+                  {order.order_items && order.order_items.length > 0 && (
+                    <div className="border-t border-foreground-faded pl-8">
+                      {order.order_items.map(
+                        (item: OrderItem & { product?: Product }) => (
+                          <div
+                            key={item.id}
+                            className="py-4 flex items-center gap-4">
+                            {item.product &&
+                              item.product.images &&
+                              item.product.images[0] && (
+                                <Image
+                                  src={item.product.images[0]}
+                                  alt={item.product.name}
+                                  className="w-12 h-12 object-cover"
+                                  width={250}
+                                  height={250}
+                                />
+                              )}
+                            <div>
+                              <p className="text-sm font-medium">
+                                {item.product
+                                  ? item.product.name
+                                  : item.product_id}
+                              </p>
+                              <p className="text-xs">
+                                Quantity: {item.quantity} | Price: Ksh{' '}
+                                {item.price}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </details>
 
         {/* Account Details */}
-        <div id='account-details' className="space-y-6">
-          <div className="border-b border-foreground-faded pb-6">
-            <div className="flex items-center gap-4 mb-4">
-              <h3 className="uppercase text-sm font-medium">Account Details</h3>
-              <p className="italic">({role})</p>
+        <details
+          id="account-details"
+          className="border-b border-foreground-faded py-6">
+          <summary className="uppercase text-lg text-accent font-medium">
+            Account Details <span className="italic text-foreground-light">({role})</span>
+          </summary>
+
+          <div className="py-4 flex flex-col gap-4">
+            <div className="w-full flex flex-col md:flex-row gap-2">
+              <Input
+                label="First Name"
+                value={user?.first_name || ''}
+                onChange={(e) =>
+                  setUser({ ...user!, first_name: e.target.value })
+                }
+                disabled={!editMode}
+              />
+              <Input
+                label="Last Name"
+                value={user?.last_name || ''}
+                onChange={(e) =>
+                  setUser({ ...user!, last_name: e.target.value })
+                }
+                disabled={!editMode}
+              />
             </div>
 
-            <div className="space-y-4">
-              <div className="w-full flex flex-col md:flex-row gap-2">
-                <Input
-                  label="First Name"
-                  value={user?.first_name || ''}
-                  onChange={(e) =>
-                    setUser({ ...user!, first_name: e.target.value })
-                  }
-                  disabled={!editMode}
-                />
-                <Input
-                  label="Last Name"
-                  value={user?.last_name || ''}
-                  onChange={(e) =>
-                    setUser({ ...user!, last_name: e.target.value })
-                  }
-                  disabled={!editMode}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Input
-                  label="Email"
-                  type="email"
-                  value={user?.email || ''}
-                  onChange={(e) => setUser({ ...user!, email: e.target.value })}
-                  disabled={!editMode}
-                />
-                {user?.email_confirmed_at ? (
-                  <p className="text-xs text-green-600">Email verified</p>
-                ) : (
-                  <p className="text-xs text-yellow-600">
-                    Check your inbox to verify email
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex gap-4 mt-6">
-              {editMode ? (
-                <>
-                  <CtaButton
-                    label="Cancel"
-                    hideIcon
-                    icon={<X size={16} />}
-                    onClick={() => setEditMode(false)}
-                    disabled={loading}
-                    secondary
-                  />
-                  <CtaButton
-                    label={loading ? 'Saving...' : 'Save Changes'}
-                    hideIcon
-                    icon={
-                      loading ? (
-                        <LoaderCircle size={16} className="animate-spin" />
-                      ) : (
-                        <SquareCheckBig size={16} />
-                      )
-                    }
-                    onClick={handleUpdateProfile}
-                    disabled={loading}
-                  />
-                </>
+            <div className="space-y-2">
+              <Input
+                label="Email"
+                type="email"
+                value={user?.email || ''}
+                onChange={(e) => setUser({ ...user!, email: e.target.value })}
+                disabled={!editMode}
+              />
+              {user?.email_confirmed_at ? (
+                <p className="text-xs text-green-600">Email verified</p>
               ) : (
-                <CtaButton
-                  label="Edit Profile"
-                  onClick={() => setEditMode(true)}
-                  secondary
-                />
+                <p className="text-xs text-yellow-600">
+                  Check your inbox to verify email
+                </p>
               )}
             </div>
           </div>
-        </div>
+
+          <div className="flex gap-4 mt-6">
+            {editMode ? (
+              <>
+                <CtaButton
+                  label="Cancel"
+                  hideIcon
+                  icon={<X size={16} />}
+                  onClick={() => setEditMode(false)}
+                  disabled={loading}
+                  secondary
+                />
+                <CtaButton
+                  label={loading ? 'Saving...' : 'Save Changes'}
+                  hideIcon
+                  icon={
+                    loading ? (
+                      <LoaderCircle size={16} className="animate-spin" />
+                    ) : (
+                      <SquareCheckBig size={16} />
+                    )
+                  }
+                  onClick={handleUpdateProfile}
+                  disabled={loading}
+                />
+              </>
+            ) : (
+              <CtaButton
+                label="Edit Profile"
+                onClick={() => setEditMode(true)}
+                secondary
+              />
+            )}
+          </div>
+        </details>
       </div>
 
       <CtaButton
@@ -265,7 +316,7 @@ export default function AccountPage() {
         icon={<LogOut size={16} />}
         onClick={handleSignOut}
         secondary
-        className="mt-8 w-fit md:w-fit"
+        className="w-fit md:w-fit md:ml-24"
       />
     </section>
   );

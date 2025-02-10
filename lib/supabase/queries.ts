@@ -1,5 +1,6 @@
 // lib/supabase/queries.ts
 
+import { Order, OrderItem } from "@/types/declarations";
 import { supabase } from "./client";
 
 export const getFeaturedProducts = async () => {
@@ -27,19 +28,6 @@ export const getRandomProducts = async () => {
   }
 
   return data || [];
-}
-
-interface Order {
-  user_id: string;
-  total: number;
-  status: string; // e.g., 'pending', 'completed'
-  invoice_id: string;
-}
-
-export interface OrderItem {
-  product_id: string;
-  quantity: number;
-  price: number;
 }
 
 export const createNewOrder = async (order: Order, items: OrderItem[]) => {
@@ -110,4 +98,41 @@ export const updateOrderStatus = async ({ invoice_id, status }: { invoice_id: st
     console.error('updateOrderStatus encountered an error:', err);
     throw err;
   }
+};
+
+export const getUserOrders = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error(`Error fetching orders for user ${userId}:`, error);
+    throw new Error(`Error fetching orders: ${error.message}`);
+  }
+
+  return data || [];
+};
+
+export const getOrderItems = async (orderId: string) => {
+  const { data, error } = await supabase
+    .from('order_items')
+    .select(`
+      *,
+      product:products (
+        id,
+        name,
+        price,
+        images
+      )
+    `)
+    .eq('order_id', orderId);
+
+  if (error) {
+    console.error(`Error fetching order items for order ${orderId}:`, error);
+    throw new Error(`Error fetching order items: ${error.message}`);
+  }
+
+  return data || [];
 };
