@@ -81,6 +81,64 @@ const MpesaForm: FC = () => {
     }
 
     try {
+      /**
+       * Initiates an MPesa payment by sending payment details to the '/api/payments/mpesa' endpoint.
+       *
+       * The request payload is a JSON object with the following structure:
+       *
+       * {
+       *   userId: string | undefined,
+       *   amount: number,
+       *   phoneNumber: string,
+       *   firstName: string | undefined,
+       *   lastName: string | undefined,
+       *   email: string | undefined,
+       *   orderItems: Array<{
+       *     product_id: string,
+       *     quantity: number,
+       *     price: number,
+       *   }>
+       * }
+       *
+       * Example payload:
+       *
+       * {
+       *   userId: "user123",
+       *   amount: 200.00,
+       *   phoneNumber: "0712345678",
+       *   firstName: "Jane",
+       *   lastName: "Doe",
+       *   email: "jane.doe@example.com",
+       *   orderItems: [
+       *     { product_id: "101", quantity: 2, price: 75.00 },
+       *     { product_id: "202", quantity: 1, price: 50.00 }
+       *   ]
+       * }
+       * 
+       * For Postman Testing:
+       * {
+          "userId": "8768a5cc-8297-45bd-acf5-645a8246afc7",
+          "amount": 2797,
+          "phoneNumber": "254114900087",
+          "firstName": "Jomo",
+          "lastName": "Kigo",
+          "email": "kigojomo@gmail.com.com",
+          "orderItems": [
+                {
+                  "product_id": "1d6ab955-1278-45e7-a87a-c206161acbfc",
+                  "quantity": 2,
+                  "price": 2198
+                },
+                {
+                  "product_id": "5f8bbbe7-1826-4b00-a0fc-ec069e59a7ad",
+                  "quantity": 1,
+                  "price": 599
+                }
+            ]
+          }
+       *
+       * @returns {Promise<Response>} A promise that resolves to the response of the fetch call.
+       */
       const res = await fetch('/api/payments/mpesa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,9 +161,12 @@ const MpesaForm: FC = () => {
 
       if (!res.ok) throw new Error(data.error || 'Payment initiation failed');
 
-      showToast('Payment request sent!\nComplete the transaction to place your order.', 'success');
+      showToast(
+        'Payment request sent!\nComplete the transaction to place your order.',
+        'success'
+      );
 
-      if(data.redirectUrl) {
+      if (data.redirectUrl) {
         router.push(data.redirectUrl);
       }
 

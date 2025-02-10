@@ -170,7 +170,7 @@ export default function AccountPage() {
                   className="p-4 bg-foreground-faded flex flex-col gap-2 transition-all duration-300">
                   <div className="flex justify-between">
                     <span className="font-bold">#{order.id?.slice(0, 8)}</span>
-                    <span>Ksh {order.total}</span>
+                    <span>Ksh {order.total.toLocaleString()}</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
@@ -216,7 +216,7 @@ export default function AccountPage() {
                               </p>
                               <p className="text-xs">
                                 Quantity: {item.quantity} | Price: Ksh{' '}
-                                {item.price}
+                                {item.price.toLocaleString()}
                               </p>
                             </div>
                           </div>
