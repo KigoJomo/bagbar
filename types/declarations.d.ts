@@ -8,13 +8,13 @@ export interface Product{
 }
 
 export interface Order {
-  id: string;
+  id?: string;
   user_id: string;
   total: number;
   status: string;
   invoice_id: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   order_items?: OrderItem[];
 }
 

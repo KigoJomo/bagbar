@@ -169,13 +169,15 @@ export default function AccountPage() {
                   key={order.id}
                   className="p-4 bg-foreground-faded flex flex-col gap-2 transition-all duration-300">
                   <div className="flex justify-between">
-                    <span className="font-bold">#{order.id.slice(0, 8)}</span>
+                    <span className="font-bold">#{order.id?.slice(0, 8)}</span>
                     <span>Ksh {order.total}</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
                     <span className="text-foreground-light">
-                      {new Date(order.created_at).toLocaleDateString()}
+                      {order.created_at
+                        ? new Date(order.created_at).toLocaleDateString()
+                        : ''}
                     </span>
                     <span
                       className={`capitalize ${
@@ -233,7 +235,8 @@ export default function AccountPage() {
           id="account-details"
           className="border-b border-foreground-faded py-6">
           <summary className="uppercase text-lg text-accent font-medium">
-            Account Details <span className="italic text-foreground-light">({role})</span>
+            Account Details{' '}
+            <span className="italic text-foreground-light">({role})</span>
           </summary>
 
           <div className="py-4 flex flex-col gap-4">

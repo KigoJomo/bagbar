@@ -1,7 +1,8 @@
 // app/api/payments/mpesa/route.ts
 import { NextResponse } from 'next/server';
 import IntaSend from 'intasend-node';
-import { createNewOrder, OrderItem } from '@/lib/supabase/queries';
+import { createNewOrder } from '@/lib/supabase/queries';
+import { OrderItem } from '@/types/declarations';
 
 interface MpesaRequest {
   userId: string;

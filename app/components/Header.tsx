@@ -30,7 +30,7 @@ const Header: React.FC = () => {
 
   const pages = [
     { name: 'about us', href: '/about' },
-    { name: 'collection', href: '/products' },
+    { name: 'shop', href: '/products' },
     { name: 'contact us', href: '/contact' },
     {
       name: isLoggedIn ? 'my account' : 'login',
@@ -182,7 +182,7 @@ const Header: React.FC = () => {
           <hr className="my-4" />
           <ul className="w-full flex flex-col gap-6 ">
             {pages.map((page, index) => (
-              <li key={index} className="w-full">
+              <li key={index} className="w-full text-foreground">
                 <Link
                   href={page.href}
                   className={`w-full flex uppercase text-lg font-semibold transition-all duration-300 ${
