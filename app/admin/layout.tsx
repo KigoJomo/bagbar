@@ -5,7 +5,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <AdminNav />
-      <div className="mt-8">{children}</div>
+      {children}
     </>
   )
 }
