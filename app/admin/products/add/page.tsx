@@ -10,11 +10,14 @@ export default function AddProductPage() {
   const router = useRouter()
   const [error, setError] = useState('')
 
-  const handleSubmit = async (productData: {
-    name: string;
-    description: string;
-    price: number;
-    images: string[];
+  const handleSubmit = async ({ productData }: {
+    productData: {
+      name: string;
+      description: string;
+      price: number;
+      images: string[];
+    };
+    deletedImages: string[];
   }) => {
     try {
       const { error } = await supabase

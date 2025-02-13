@@ -1,5 +1,7 @@
+// app/components/admin/ProductForm.tsx
+
 'use client';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useToast } from '@/context/toast-context';
 import { supabase } from '@/lib/supabase/client';
 import Image from 'next/image';
@@ -8,22 +10,74 @@ import CtaButton from '../CtaButton';
 import { X } from 'lucide-react';
 
 interface ProductFormProps {
-  onSubmit: (productData: {
-    name: string;
-    description: string;
-    price: number;
-    images: string[];
+  onSubmit: (data: {
+    productData: {
+      name: string;
+      description: string;
+      price: number;
+      stock: number;
+      images: string[];
+    };
+    deletedImages: string[];
   }) => void;
   error?: string;
+  initialName?: string;
+  initialPrice?: number;
+  initialDescription?: string;
+  initialImages?: string[];
+  initialStock?: number;
+  isEditing?: boolean;
 }
 
-export default function ProductForm({ onSubmit, error }: ProductFormProps) {
+export default function ProductForm({
+  onSubmit,
+  error,
+  initialName = '',
+  initialPrice = 0,
+  initialDescription = '',
+  initialImages = [],
+  initialStock = 0,
+  isEditing = false,
+}: ProductFormProps) {
   const { showToast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Form state
+  const [name, setName] = useState(initialName);
+  const [price, setPrice] = useState(initialPrice);
+  const [description, setDescription] = useState(initialDescription);
+  const [stock, setStock] = useState(initialStock);
+
+  // Image state
   const [uploading, setUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(initialImages);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+  const initialImagesString = useMemo(
+    () => JSON.stringify(initialImages),
+    [initialImages]
+  );
+
+  // Reset form when initial props change
+  useEffect(() => {
+    setName(initialName);
+    setPrice(initialPrice);
+    setDescription(initialDescription);
+    setStock(initialStock); // Initialize stock
+    setExistingImages(initialImages);
+    setDeletedImages([]);
+    setPreviewUrls([]);
+    setSelectedFiles([]);
+  }, [
+    initialName,
+    initialPrice,
+    initialDescription,
+    initialStock,
+    initialImagesString,
+  ]);
 
   const handleImageUpload = async (file: File) => {
     const uniqueName = `${Date.now()}-${Math.random()
@@ -43,33 +97,53 @@ export default function ProductForm({ onSubmit, error }: ProductFormProps) {
     }
   };
 
-  const handleFileChange = useCallback((files: File[]) => {
-    const validFiles = files.filter(file => {
-      if (!file.type.startsWith('image/')) {
-        showToast('Only image files are allowed', 'error');
-        return false;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('File size must be less than 5MB', 'error');
-        return false;
-      }
-      return true;
-    });
+  const handleFileChange = useCallback(
+    (files: File[]) => {
+      const availableSlots = 5 - (existingImages.length - deletedImages.length);
+      const currentNewFiles = selectedFiles.length;
 
-    const totalFiles = selectedFiles.length + validFiles.length;
-    if (totalFiles > 5) {
-      showToast(`Maximum 5 images allowed (${selectedFiles.length} already added)`, 'error');
-      return;
+      const validFiles = files.filter((file) => {
+        if (!file.type.startsWith('image/')) {
+          showToast('Only image files are allowed', 'error');
+          return false;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('File size must be less than 5MB', 'error');
+          return false;
+        }
+        return true;
+      });
+
+      const totalNewFilesAfterAddition = currentNewFiles + validFiles.length;
+      if (totalNewFilesAfterAddition > availableSlots) {
+        showToast(
+          `You can add up to ${availableSlots} more images (${currentNewFiles} already added)`,
+          'error'
+        );
+        return;
+      }
+
+      const urls = validFiles.map((file) => URL.createObjectURL(file));
+      setPreviewUrls((prev) => [...prev, ...urls]);
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+    },
+    [
+      existingImages.length,
+      deletedImages.length,
+      selectedFiles.length,
+      showToast,
+    ]
+  );
+
+  const handleRemoveImage = (index: number, isExisting: boolean) => {
+    if (isExisting) {
+      const removedImage = existingImages[index];
+      setDeletedImages((prev) => [...prev, removedImage]);
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+      setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
     }
-
-    const urls = validFiles.map(file => URL.createObjectURL(file));
-    setPreviewUrls(prev => [...prev, ...urls]);
-    setSelectedFiles(prev => [...prev, ...validFiles]);
-  }, [selectedFiles.length, showToast]);
-
-  const handleRemoveImage = (index: number) => {
-    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -94,40 +168,46 @@ export default function ProductForm({ onSubmit, error }: ProductFormProps) {
     e.preventDefault();
     setUploading(true);
 
-    if (!formRef.current) {
-      showToast('Form reference error', 'error');
-      return;
-    }
-
     try {
-      showToast('Adding product...', 'info');
-      // Upload images first
-      const uploadedImageUrls = await Promise.all(selectedFiles.map(handleImageUpload));
+      showToast(
+        isEditing ? 'Updating product...' : 'Adding product...',
+        'info'
+      );
 
-      // Get form values using FormData API
-      const formData = new FormData(formRef.current);
-      const productData = {
-        name: formData.get('name') as string,
-        description: formData.get('description') as string,
-        price: parseFloat(formData.get('price') as string),
-        images: uploadedImageUrls
-      };
+      const uploadedImageUrls = await Promise.all(
+        selectedFiles.map(handleImageUpload)
+      );
 
-      onSubmit(productData);
+      const allImages = [...existingImages, ...uploadedImageUrls];
+
+      if (allImages.length === 0) {
+        showToast('At least one image is required', 'error');
+        return;
+      }
+
+      onSubmit({
+        productData: {
+          name,
+          description,
+          price,
+          stock,
+          images: allImages,
+        },
+        deletedImages: isEditing ? deletedImages : [],
+      });
     } catch (error) {
       console.error('Submission failed:', error);
-      showToast('Failed to upload product. Please try again.', 'error');
+      showToast(`Failed to ${isEditing ? 'update' : 'add'} product`, 'error');
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <form 
+    <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="w-full grid md:grid-cols-2 gap-6"
-    >
+      className="w-full grid md:grid-cols-2 gap-6">
       {error && (
         <div className="md:col-span-2 text-red-500 p-3 bg-red-50">{error}</div>
       )}
@@ -170,22 +250,38 @@ export default function ProductForm({ onSubmit, error }: ProductFormProps) {
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          {previewUrls.map((url, index) => (
+          {existingImages.map((url, index) => (
             <div
-              key={index}
+              key={`existing-${index}`}
               className="relative aspect-square border overflow-hidden group">
               <Image
                 src={url}
-                width={300}
-                height={300}
-                alt={`Preview ${index + 1}`}
-                className="object-cover w-full h-full"
+                fill
+                alt={`Existing image ${index + 1}`}
+                className="object-cover"
               />
               <button
                 type="button"
-                onClick={() => handleRemoveImage(index)}
-                className="absolute top-1 right-1 bg-red-500/80 text-white p-1 rounded-full 
-                         opacity-0 group-hover:opacity-100 transition-opacity">
+                onClick={() => handleRemoveImage(index, true)}
+                className="absolute top-1 right-1 bg-red-500/80 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+          {previewUrls.map((url, index) => (
+            <div
+              key={`new-${index}`}
+              className="relative aspect-square border overflow-hidden group">
+              <Image
+                src={url}
+                fill
+                alt={`New image ${index + 1}`}
+                className="object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveImage(index, false)}
+                className="absolute top-1 right-1 bg-red-500/80 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <X size={16} />
               </button>
             </div>
@@ -196,29 +292,69 @@ export default function ProductForm({ onSubmit, error }: ProductFormProps) {
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
           <label className="block font-medium">Product Name</label>
-          <Input name="name" type="text" required />
+          <Input
+            name="name"
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
         <div className="space-y-2">
           <label className="block font-medium">Price (KES)</label>
-          <Input name="price" type="number" step="0.01" required />
+          <Input
+            name="price"
+            type="number"
+            step="0.01"
+            required
+            value={price}
+            onChange={(e) => setPrice(Number(e.target.value))}
+          />
         </div>
+
+        <div className="space-y-2">
+          <label className="block font-medium">Stock Quantity</label>
+          <Input
+            name="stock"
+            type="number"
+            min="0"
+            required
+            value={stock}
+            onChange={(e) => setStock(Number(e.target.value))}
+          />
+        </div>
+
         <div className="space-y-2">
           <label className="block font-medium">Description</label>
           <textarea
             name="description"
             required
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            className="w-full rounded-none border border-foreground-light outline-none px-4 py-2 
-                     bg-transparent transition-all duration-300 focus:outline-none focus:border-accent 
-                     disabled:cursor-not-allowed disabled:border-foreground-faded"
+            className="w-full rounded-none border border-foreground-light outline-none px-4 py-2 bg-transparent transition-all duration-300 focus:outline-none focus:border-accent disabled:cursor-not-allowed disabled:border-foreground-faded"
           />
         </div>
       </div>
 
       <CtaButton
-        label={uploading ? 'Adding Product...' : 'Add Product'}
+        label={
+          uploading
+            ? isEditing
+              ? 'Updating...'
+              : 'Adding...'
+            : isEditing
+            ? 'Update Product'
+            : 'Add Product'
+        }
         type="submit"
-        disabled={uploading || selectedFiles.length === 0}
+        disabled={
+          uploading ||
+          existingImages.length -
+            deletedImages.length +
+            selectedFiles.length ===
+            0
+        }
         className="w-full md:col-span-2"
       />
     </form>
