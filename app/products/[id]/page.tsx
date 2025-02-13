@@ -9,7 +9,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
 

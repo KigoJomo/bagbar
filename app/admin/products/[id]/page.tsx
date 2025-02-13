@@ -6,7 +6,7 @@ import AdminProductActions from '@/app/components/admin/AdminProductActions';
 export default async function AdminProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
   const product = await getProductById(id);
