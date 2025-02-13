@@ -30,6 +30,32 @@ export const getRandomProducts = async () => {
   return data || [];
 }
 
+export const getProducts = async () => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
+};
+
+export const getProductById = async (id: string) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export const createNewOrder = async (order: Order, items: OrderItem[]) => {
   console.log(`Creating new order for user ${order.user_id}...`);
 

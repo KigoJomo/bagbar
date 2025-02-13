@@ -5,6 +5,8 @@ export interface Product{
   name: string;
   price: number;
   images: string[];
+  description?: string
+  stock?: number;
 }
 
 export interface Order {
