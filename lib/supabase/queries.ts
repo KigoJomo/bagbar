@@ -59,7 +59,7 @@ export const getProductById = async (id: string) => {
 export const createNewOrder = async (order: Order, items: OrderItem[]) => {
   console.log(`Creating new order for user ${order.user_id}...`);
 
-  // Insert the new order into the "orders" table.
+  // 1. Insert the new order into the "orders" table.
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
     .insert(order)
@@ -73,7 +73,7 @@ export const createNewOrder = async (order: Order, items: OrderItem[]) => {
 
   console.log("Order created successfully with ID:", orderData.id);
 
-  // Prepare and insert the order items.
+  // 2. Prepare and insert the order items.
   const itemsToInsert = items.map(item => ({
     ...item,
     order_id: orderData.id,
@@ -90,7 +90,7 @@ export const createNewOrder = async (order: Order, items: OrderItem[]) => {
 
   console.log("Order items created successfully for order ID:", orderData.id);
 
-  // Clear the user's cart once the order is successfully created.
+  // 3. Clear the user's cart once the order is successfully created.
   const { error: cartError } = await supabase
     .from('carts')
     .delete()
@@ -102,6 +102,39 @@ export const createNewOrder = async (order: Order, items: OrderItem[]) => {
   }
 
   console.log("Cart cleared successfully for user:", order.user_id);
+
+  // 4. Update product stock for each order item.
+  const updateStockPromises = items.map(async (item) => {
+    // Fetch the current stock for the product.
+    const { data: productData, error: productError } = await supabase
+      .from('products')
+      .select('stock')
+      .eq('id', item.product_id)
+      .single();
+    if (productError) {
+      console.error(`Error fetching product ${item.product_id} stock:`, productError);
+      throw new Error(productError.message);
+    }
+    const currentStock = productData.stock || 0;
+    const newStock = currentStock - item.quantity;
+    // Ensure newStock is not negative.
+    if (newStock < 0) {
+      console.error(`Insufficient stock for product ${item.product_id}. Current stock: ${currentStock}, requested: ${item.quantity}`);
+      throw new Error(`Insufficient stock for product ${item.product_id}`);
+    }
+    // Update the product's stock.
+    const { error: updateError } = await supabase
+      .from('products')
+      .update({ stock: newStock })
+      .eq('id', item.product_id);
+    if (updateError) {
+      console.error(`Error updating stock for product ${item.product_id}:`, updateError);
+      throw new Error(updateError.message);
+    }
+    console.log(`Stock updated for product ${item.product_id}: ${currentStock} -> ${newStock}`);
+  });
+
+  await Promise.all(updateStockPromises);
 
   return orderData;
 };

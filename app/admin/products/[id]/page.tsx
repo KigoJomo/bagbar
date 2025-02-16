@@ -1,7 +1,7 @@
 // app/admin/products/[id]/page.tsx
 
 import { getProductById } from '@/lib/supabase/queries';
-import AdminProductActions from '@/app/components/admin/AdminProductActions';
+import AdminProductActions from '@/app/components/Admin/AdminProductActions';
 
 export default async function AdminProductPage({
   params,

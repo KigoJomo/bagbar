@@ -44,9 +44,9 @@ export default function ProductForm({
 
   // Form state
   const [name, setName] = useState(initialName);
-  const [price, setPrice] = useState(initialPrice);
   const [description, setDescription] = useState(initialDescription);
-  const [stock, setStock] = useState(initialStock);
+  const [price, setPrice] = useState(initialPrice.toString());
+  const [stock, setStock] = useState(initialStock.toString());
 
   // Image state
   const [uploading, setUploading] = useState(false);
@@ -64,9 +64,9 @@ export default function ProductForm({
   // Reset form when initial props change
   useEffect(() => {
     setName(initialName);
-    setPrice(initialPrice);
+    setPrice(initialPrice.toString()); // Convert to string
     setDescription(initialDescription);
-    setStock(initialStock); // Initialize stock
+    setStock(initialStock.toString()); // Convert to string
     setExistingImages(initialImages);
     setDeletedImages([]);
     setPreviewUrls([]);
@@ -167,30 +167,46 @@ export default function ProductForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUploading(true);
-
+  
+    // Convert to numbers with validation
+    const priceValue = parseFloat(price);
+    const stockValue = parseInt(stock, 10);
+  
+    if (isNaN(priceValue) || priceValue <= 0) {
+      showToast('Please enter a valid price greater than 0', 'error');
+      setUploading(false);
+      return;
+    }
+  
+    if (isNaN(stockValue) || stockValue < 0) {
+      showToast('Please enter a valid stock quantity', 'error');
+      setUploading(false);
+      return;
+    }
+  
     try {
       showToast(
         isEditing ? 'Updating product...' : 'Adding product...',
         'info'
       );
-
+  
       const uploadedImageUrls = await Promise.all(
         selectedFiles.map(handleImageUpload)
       );
-
+  
       const allImages = [...existingImages, ...uploadedImageUrls];
-
+  
       if (allImages.length === 0) {
         showToast('At least one image is required', 'error');
         return;
       }
-
+  
       onSubmit({
         productData: {
           name,
           description,
-          price,
-          stock,
+          price: priceValue,
+          stock: stockValue,
           images: allImages,
         },
         deletedImages: isEditing ? deletedImages : [],
@@ -291,36 +307,46 @@ export default function ProductForm({
 
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
-          <label className="block font-medium">Product Name</label>
           <Input
             name="name"
             type="text"
+            label="Product Name"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className="space-y-2">
-          <label className="block font-medium">Price (KES)</label>
           <Input
             name="price"
             type="number"
+            label="Price (KES)"
             step="0.01"
             required
             value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
+            onChange={(e) => setPrice(e.target.value.replace(/[^0-9.]/g, ''))} // Allow only numbers and decimals
+            onBlur={(e) => {
+              // Format on blur
+              const value = parseFloat(e.target.value);
+              setPrice(isNaN(value) ? '' : value.toFixed(2));
+            }}
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block font-medium">Stock Quantity</label>
           <Input
             name="stock"
             type="number"
+            label="Stock Quantity"
             min="0"
             required
             value={stock}
-            onChange={(e) => setStock(Number(e.target.value))}
+            onChange={(e) => setStock(e.target.value.replace(/[^0-9]/g, ''))} // Allow only integers
+            onBlur={(e) => {
+              // Format on blur
+              const value = parseInt(e.target.value);
+              setStock(isNaN(value) ? '' : value.toString());
+            }}
           />
         </div>
 

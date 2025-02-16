@@ -1,19 +1,19 @@
 // app/admin/products/page.tsx
 
-import AdminProductGrid from '@/app/components/admin/AdminProductGrid';
+import AdminProductGrid from '@/app/components/Admin/AdminProductGrid';
 import { getProducts } from '@/lib/supabase/queries';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function AdminProductsPage() {
   const products = await getProducts();
-  
+
   return (
     <>
-      <section className="max-h-screen overflow-scroll scrollbar-custom pt-0">
+      <section className="max-h-screen overflow-scroll scrollbar-custom">
         <h3 className="uppercase">Products</h3>
 
-        <AdminProductGrid products={products} className='mb-28' />
+        <AdminProductGrid products={products} className="mb-28" />
 
         <Link
           href="/admin/products/add"

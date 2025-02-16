@@ -20,7 +20,7 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
   if (viewType === 'list') {
     return (
       <div
-        className={`flex items-center p-2 md:border-b border-foreground-faded  md:bg-transparent hover:bg-foreground-faded fade-in transition-all duration-300 ${className}`}>
+        className={`flex items-center p-2 border-b border-foreground-faded  md:bg-transparent hover:bg-foreground-faded fade-in transition-all duration-300 ${className}`}>
         <Link
           href={`/admin/products/${product.id}`}
           className={`w-full flex items-center gap-4 group`}>

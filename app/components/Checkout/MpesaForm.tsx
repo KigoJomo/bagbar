@@ -9,6 +9,8 @@ import { useToast } from '@/context/toast-context';
 import CtaButton from '../CtaButton';
 import { supabase } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const MpesaForm: FC = () => {
   const [user, setUser] = useState<{
@@ -181,7 +183,31 @@ const MpesaForm: FC = () => {
 
   return (
     <div className="space-y-6">
-      <h4 className="text-2xl font-semibold">Pay via M-Pesa</h4>
+      <h4 className="text-2xl font-semibold">complete your checkout</h4>
+      <span style={{ display: 'block', textAlign: 'center' }} className=''>
+        <Link href="https://intasend.com/security" target="_blank" className='flex justify-center'>
+          <Image
+            src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-light.png"
+            width={375}
+            height={375}
+            alt="IntaSend Secure Payments (PCI-DSS Compliant)"
+          />
+        </Link>
+        <strong>
+          <a
+            style={{
+              display: 'block',
+              color: '#454545',
+              textDecoration: 'none',
+              fontSize: '0.8em',
+              marginTop: '0.6em',
+            }}
+            href="https://intasend.com/security"
+            target="_blank">
+            Secured by IntaSend Payments
+          </a>
+        </strong>{' '}
+      </span>
       <form onSubmit={handlePayment} className="space-y-4">
         <Input
           type="tel"

@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { Product } from '@/types/declarations';
-import ProductForm from '@/app/components/admin/ProductForm';
+import ProductForm from '@/app/components/Admin/ProductForm';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/context/toast-context';
 import { useRouter } from 'next/navigation';
@@ -103,7 +103,7 @@ export default function AdminProductActions({ product }: { product: Product }) {
 
   if (isEditing) {
     return (
-      <section className="md:pt-12 md:px-12 fade-in">
+      <section className="md:pt-12 pb-24 md:px-12 fade-in">
         <button
           onClick={() => setIsEditing(false)}
           className="mb-6 flex items-center gap-2 text-accent hover:text-accent-dark transition-colors"
@@ -125,7 +125,7 @@ export default function AdminProductActions({ product }: { product: Product }) {
   }
 
   return (
-    <section className="p-0 md:pt-12 md:px-12 flex flex-col md:flex-row md:gap-6 fade-in">
+    <section className="p-0 pb-24 md:pt-12 md:px-12 flex flex-col md:flex-row md:gap-6 fade-in">
       <div className="w-full md:w-1/2 h-fit md:order-2">
         <GalleryCarousel images={product.images} />
       </div>

@@ -15,12 +15,12 @@ interface AdminProductGridProps {
   className?: string;
 }
 
-const ViewToggle = ({ 
-  viewType, 
-  setViewType 
-}: { 
-  viewType: ViewType; 
-  setViewType: (type: ViewType) => void 
+const ViewToggle = ({
+  viewType,
+  setViewType,
+}: {
+  viewType: ViewType;
+  setViewType: (type: ViewType) => void;
 }) => {
   const viewOptions = [
     { type: 'grid' as const, Icon: LayoutGrid, label: 'Grid view' },
@@ -29,6 +29,7 @@ const ViewToggle = ({
 
   return (
     <div className="flex gap-2">
+      {/* {viewType === ''} */}
       {viewOptions.map(({ type, Icon, label }) => (
         <button
           key={type}
@@ -38,8 +39,7 @@ const ViewToggle = ({
             viewType === type ? 'text-accent' : 'text-foreground'
           )}
           aria-label={label}
-          aria-pressed={viewType === type}
-        >
+          aria-pressed={viewType === type}>
           <Icon size={20} />
         </button>
       ))}
@@ -55,26 +55,37 @@ const ColumnHeaders = () => (
   </div>
 );
 
-const AdminProductGrid: FC<AdminProductGridProps> = ({ products, className }) => {
+const AdminProductGrid: FC<AdminProductGridProps> = ({
+  products,
+  className,
+}) => {
   const { viewType, setViewType } = useViewPreference();
 
   return (
     <div className={clsx('w-full flex flex-col gap-4', className)}>
-      <div className={`w-full flex items-center justify-between ${viewType === 'list' ? 'bg-foreground-faded backdrop-blur-3xl' : 'bg-background'} p-2 sticky top-0 z-10`}>
-        {viewType === 'list' ? <ColumnHeaders /> : <div className="w-full"></div>}
+      <div
+        className={`w-full flex items-center justify-between ${
+          viewType === 'list'
+            ? 'bg-foreground-faded backdrop-blur-3xl'
+            : 'bg-background'
+        } p-2 sticky -top-4 z-10`}>
+        {viewType === 'list' ? (
+          <ColumnHeaders />
+        ) : (
+          <div className="w-full"><h4 className='uppercase text-foreground-light'>Inventory</h4></div>
+        )}
         <ViewToggle viewType={viewType} setViewType={setViewType} />
       </div>
 
-      <div className={clsx(
-        'w-full',
-        viewType === 'list' && 'flex flex-col gap-2 md:gap-0',
-        viewType === 'grid' && 'grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
-      )}>
+      <div
+        className={clsx(
+          'w-full',
+          viewType === 'list' && 'flex flex-col gap-2 md:gap-0',
+          viewType === 'grid' &&
+            'grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
+        )}>
         {products.map((product) => (
-          <AdminProductCard 
-            key={product.id} 
-            product={product}
-          />
+          <AdminProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>

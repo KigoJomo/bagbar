@@ -44,9 +44,15 @@ export default async function ProductPage({
               ksh {product.price.toLocaleString()}
             </p>
           </div>
+          
           <div className="w-full flex flex-col gap-1">
             <p className="text-xs opacity-50">About:</p>
             <p className="text-sm">{product.description}</p>
+          </div>
+
+          <div className="w-full flex items-center gap-1">
+            <p className="text-xs opacity-50">Stock:</p>
+            <p className="text-sm">{product.stock}</p>
           </div>
 
           <hr className="" />

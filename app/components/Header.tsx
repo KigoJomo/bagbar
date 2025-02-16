@@ -89,6 +89,7 @@ const Header: React.FC = () => {
           : 'sticky top-0 z-30 bg-background border-b border-foreground-faded'
       }`}>
       <div className="container mx-auto flex justify-between items-center py-2">
+        {/* Desktop Navigation */}
         <nav className="w-1/3 hidden md:flex items-center gap-8">
           {pages.slice(0, 2).map((page, index) => (
             <Link
@@ -119,7 +120,7 @@ const Header: React.FC = () => {
                   ? '/images/logo.webp'
                   : '/images/logo-dark.webp'
               }
-              alt="Cordova Logo"
+              alt="Bag Bar Logo"
               width={100}
               height={50}
               className="object-contain md:hover:scale-105 transition-all duration-300"
@@ -173,7 +174,7 @@ const Header: React.FC = () => {
                   ? '/images/logo.webp'
                   : '/images/logo-dark.webp'
               }
-              alt="Cordova Logo"
+              alt="Bag Bar Logo"
               width={100}
               height={50}
               className="object-contain"
